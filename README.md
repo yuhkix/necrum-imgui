@@ -21,7 +21,7 @@ A modern, feature-rich ImGui-based UI framework designed for Windows application
 
 ![Necrum ImGui Screenshot](assets/screenshots/necrum.png)
 
-> Example UI showing the multi-renderer menu, themed widgets, and file download pipeline status panels.
+> Example UI showing the multi-renderer menu and themed widgets.
 
 
 ## 🚀 Installation
