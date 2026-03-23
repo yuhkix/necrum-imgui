@@ -39,3 +39,19 @@
 
 # debug information files
 *.dwo
+
+# xmake build directories
+build/
+.xmake/
+
+# Logs
+*.log
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+*~
