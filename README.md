@@ -17,6 +17,13 @@ A modern, feature-rich ImGui-based UI framework designed for Windows application
 - **Hook System**: Advanced rendering hooks for various graphics APIs
 - **Cross-Platform Ready**: Windows-focused with extensible architecture
 
+## 🖼️ Screenshot Preview
+
+![Necrum ImGui Screenshot](assets/screenshots/necrum.png)
+
+> Example UI showing the multi-renderer menu, themed widgets, and file download pipeline status panels.
+
+
 ## 🚀 Installation
 
 ### Prerequisites
