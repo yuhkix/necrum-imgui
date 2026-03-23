@@ -40,6 +40,8 @@ xmake
 
 - `necrum` - Main binary application
 - `necrum_gl` - OpenGL shared library (DLL)
+- `necrum_dx11` - DirectX11 shared library (DLL)
+- `necrum_vk` - Vulkan shared library (DLL)
 
 ## 📖 Usage
 
