@@ -397,20 +397,17 @@ void Menu::render_overlays()
 	const float overlay_w = 270.0f;
 	const float margin = 18.0f;
 
-	ImVec2 column_pos(display.x - overlay_w - margin, margin);
-	float y = column_pos.y;
+	// Keybinds: Middle-Left edge
+	ImVec2 hk_pos(margin, display.y * 0.45f);
+	draw_hotkey_overlay(hk_pos, overlay_w);
 
-	float hk_h = draw_hotkey_overlay(ImVec2(column_pos.x, y), overlay_w);
-	if (hk_h > 0.0f)
-		y += hk_h + 12.0f;
+	// Spectators: Middle-Right edge
+	ImVec2 spec_pos(display.x - overlay_w - margin, display.y * 0.45f);
+	draw_spectator_overlay(spec_pos, overlay_w);
 
-	float spec_h = draw_spectator_overlay(ImVec2(column_pos.x, y), overlay_w);
-	if (spec_h > 0.0f)
-		y += spec_h + 12.0f;
-
+	// Bomb Timer: Top-Center
 	const float bomb_w = overlay_w;
-	const float bomb_h = 152.0f;
-	ImVec2 bomb_pos(display.x - bomb_w - margin, display.y - bomb_h - margin);
+	ImVec2 bomb_pos((display.x - bomb_w) * 0.5f, margin + 40.0f);
 	draw_bomb_timer_overlay(bomb_pos, bomb_w);
 }
 
@@ -614,49 +611,28 @@ void Menu::draw_intro()
 
 	float logo_y_off = (1.0f - reveal_t) * 5.0f - out_t * 2.0f;
 
-	float logo_base_y = pmin.y + 58.0f * panel_scale + logo_y_off;
+	float logo_base_y = pmin.y + 66.0f * panel_scale + logo_y_off;
 
-	if (theme::font_icons && logo_alpha > 0.01f)
+	if (logo_alpha > 0.01f)
 
 	{
 
-		float icon_size = 27.0f * panel_scale;
+		const char* logo_url = "https://i.ibb.co/k2tJg9Gx/necrum.png";
 
-		ImVec2 icon_ts = theme::font_icons->CalcTextSizeA(
+		ImTextureID logo_tex = ::web_image::get_web_image(logo_url);
 
-				icon_size, FLT_MAX, 0.0f, ICON_FA_STAR_AND_CRESCENT);
+		if (logo_tex)
 
-		ImVec2 icon_pos(center.x - icon_ts.x * 0.5f,
+		{
 
-										logo_base_y - icon_ts.y * 0.5f);
+			float lsize = 56.0f * panel_scale;
 
-		ImVec2 icon_center(icon_pos.x + icon_ts.x * 0.5f,
+			ImVec2 lpos(center.x - lsize * 0.5f, logo_base_y - lsize * 0.5f);
 
-											 icon_pos.y + icon_ts.y * 0.5f);
+			dl->AddImageRounded(logo_tex, lpos, ImVec2(lpos.x + lsize, lpos.y + lsize), {0, 0}, {1, 1}, IM_COL32(255, 255, 255, (int)(255.0f * logo_alpha)), 12.0f * panel_scale);
 
-		dl->AddCircleFilled(icon_center, 16.0f * panel_scale,
+		}
 
-												IM_COL32((int)(acf.x * 255.0f), (int)(acf.y * 255.0f),
-
-																 (int)(acf.z * 255.0f),
-
-																 (int)(20.0f * logo_alpha)),
-
-												32);
-
-		dl->AddText(
-
-				theme::font_icons, icon_size, ImVec2(icon_pos.x, icon_pos.y + 1.0f),
-
-				IM_COL32(0, 0, 0, (int)(100 * logo_alpha)), ICON_FA_STAR_AND_CRESCENT);
-
-		dl->AddText(theme::font_icons, icon_size, icon_pos,
-
-								IM_COL32((int)(acf.x * 255.0f), (int)(acf.y * 255.0f),
-
-												 (int)(acf.z * 255.0f), (int)(228 * logo_alpha)),
-
-								ICON_FA_STAR_AND_CRESCENT);
 	}
 
 	if (theme::font_logo && logo_alpha > 0.01f)
@@ -673,7 +649,7 @@ void Menu::draw_intro()
 
 		ImVec2 name_pos(center.x - name_ts.x * 0.5f,
 
-										logo_base_y + 17.0f * panel_scale);
+										logo_base_y + 36.0f * panel_scale);
 
 		dl->AddText(theme::font_logo, font_size,
 

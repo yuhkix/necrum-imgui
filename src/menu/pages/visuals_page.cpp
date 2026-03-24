@@ -1397,7 +1397,7 @@ void Menu::page_visuals()
 				}
 				if (show_box_color)
 				{
-					flat_color_picker("Box Color##boxc", &esp_box_hue_, &esp_box_sat_, &esp_box_val_);
+					flat_color_picker("Box Color##boxc", &esp_box_hue_, &esp_box_sat_, &esp_box_val_, 0.0f, 0.74f, 0.78f);
 				}
 			}
 		}
@@ -1415,11 +1415,11 @@ void Menu::page_visuals()
 			{
 				if (show_health_top)
 				{
-					flat_color_picker("Health Top##htop", &esp_health_top_hue_, &esp_health_top_sat_, &esp_health_top_val_);
+					flat_color_picker("Health Top##htop", &esp_health_top_hue_, &esp_health_top_sat_, &esp_health_top_val_, 120.0f, 0.7f, 0.8f);
 				}
 				if (show_health_bottom)
 				{
-					flat_color_picker("Health Bottom##hbot", &esp_health_bot_hue_, &esp_health_bot_sat_, &esp_health_bot_val_);
+					flat_color_picker("Health Bottom##hbot", &esp_health_bot_hue_, &esp_health_bot_sat_, &esp_health_bot_val_, 0.0f, 0.7f, 0.8f);
 				}
 			}
 		}
@@ -1434,7 +1434,7 @@ void Menu::page_visuals()
 			any_right = true;
 			if (esp_name_ && show_name_color)
 			{
-				flat_color_picker("Name Color##namc", &esp_name_hue_, &esp_name_sat_, &esp_name_val_);
+				flat_color_picker("Name Color##namc", &esp_name_hue_, &esp_name_sat_, &esp_name_val_, 0.0f, 0.0f, 0.91f);
 			}
 		}
 
@@ -1455,7 +1455,7 @@ void Menu::page_visuals()
 			any_right = true;
 			if (esp_skeleton_ && show_skel_color)
 			{
-				flat_color_picker("Skeleton Color##skelc", &esp_skeleton_hue_, &esp_skeleton_sat_, &esp_skeleton_val_);
+				flat_color_picker("Skeleton Color##skelc", &esp_skeleton_hue_, &esp_skeleton_sat_, &esp_skeleton_val_, 0.0f, 0.0f, 0.65f);
 			}
 		}
 

@@ -6,7 +6,7 @@ namespace ui
 {
 char s_color_clipboard[8];
 
-bool flat_color_picker(const char* label, float* hue, float* sat, float* val)
+bool flat_color_picker(const char* label, float* hue, float* sat, float* val, float def_h, float def_s, float def_v)
 {
 	ImGui::PushID(label);
 	bool changed = false;
@@ -63,6 +63,16 @@ bool flat_color_picker(const char* label, float* hue, float* sat, float* val)
 				float r = hr / 255.0f, g = hg / 255.0f, b = hb / 255.0f;
 				ImGui::ColorConvertRGBtoHSV(r, g, b, *hue, *sat, *val);
 				*hue *= 360.0f;
+				changed = true;
+			}
+		}
+		if (def_h >= 0.0f)
+		{
+			if (ImGui::Selectable("Reset Color"))
+			{
+				*hue = def_h;
+				*sat = def_s;
+				*val = def_v;
 				changed = true;
 			}
 		}

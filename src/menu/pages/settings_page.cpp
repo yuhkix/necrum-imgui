@@ -93,9 +93,7 @@ void Menu::page_settings()
 
 		{
 
-			flat_color_picker("Accent Color##accent", &accent_hue_, &accent_sat_,
-
-												&accent_val_);
+			flat_color_picker("Accent Color##accent", &accent_hue_, &accent_sat_, &accent_val_, 265.91f, 0.690f, 1.0f);
 
 			any_left = true;
 		}
