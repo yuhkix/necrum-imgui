@@ -1,6 +1,5 @@
 #include "renderer.h"
 #include "../menu/theme.h"
-#include "../pch.h"
 
 #include "../ext/imgui/imgui.h"
 #include "../ext/imgui/backends/imgui_impl_dx11.h"
@@ -53,8 +52,8 @@ bool Renderer::create_app_window()
 	int sw = GetSystemMetrics(SM_CXSCREEN);
 	int sh = GetSystemMetrics(SM_CYSCREEN);
 
-	h_hwnd = CreateWindowExW(WS_EX_TOPMOST, wc.lpszClassName, L"necrum", WS_POPUP, 0, 0, sw, sh, nullptr,
-													 nullptr, wc.hInstance, nullptr);
+	h_hwnd = CreateWindowExW(WS_EX_TOPMOST, wc.lpszClassName, L"necrum", WS_POPUP, 0, 0, sw, sh, nullptr, nullptr,
+													 wc.hInstance, nullptr);
 	if (!h_hwnd)
 		return false;
 

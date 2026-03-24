@@ -46,7 +46,7 @@ private:
 
 	float alpha_ = 1.0f;
 	float target_alpha_ = 1.0f;
-	float anim_speed_ = 14.0f;
+	float anim_speed_ = 20.0f;
 
 	float hotkey_alpha_ = 0.0f;
 	float spec_alpha_ = 0.0f;
