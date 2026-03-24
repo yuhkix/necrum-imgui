@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/fonts/FontAwesome.h"
-#include "pch.h"
+#include "../core/fonts/FontAwesome.h"
+#include "../pch.h"
 #include <algorithm>
 #include <cctype>
 #include <chrono>
@@ -9,8 +9,8 @@
 #include <cstdio>
 #include <cstring>
 #include <ctime>
-#include <imgui.h>
-#include <imgui_internal.h>
+#include "../ext/imgui/imgui.h"
+#include "../ext/imgui/imgui_internal.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -18,6 +18,17 @@
 
 #undef min
 #undef max
+
+namespace ui {
+	template<typename T>
+	inline T clamp(T v, T mn, T mx) {
+		return (v < mn) ? mn : (v > mx) ? mx : v;
+	}
+
+	inline float saturate(float v) {
+		return clamp(v, 0.0f, 1.0f);
+	}
+}
 
 namespace ui
 {
@@ -85,7 +96,7 @@ static ImU32 styled(ImU32 c, float alpha_mul = 1.0f)
 static ImU32 alpha_mul(ImU32 c, float mul)
 {
 	float a = ((c >> IM_COL32_A_SHIFT) & 0xFF) / 255.0f;
-	a = std::clamp(a * mul, 0.0f, 1.0f);
+	a = ui::saturate(a * mul);
 	return (c & ~IM_COL32_A_MASK) | (static_cast<ImU32>(a * 255.0f + 0.5f) << IM_COL32_A_SHIFT);
 }
 
@@ -112,15 +123,11 @@ static std::vector<SideItem> get_sidebar_items(int top_tab)
 	switch (top_tab)
 	{
 	case 0:
-		return {{ICON_FA_GUN, "  RAGEBOT"},
-						{ICON_FA_BOLT, "  EXPLOITS"},
-						{ICON_FA_GHOST, "  ANTI-AIM"}};
+		return {{ICON_FA_GUN, "  RAGEBOT"}, {ICON_FA_BOLT, "  EXPLOITS"}, {ICON_FA_GHOST, "  ANTI-AIM"}};
 	case 1:
-		return {
-				{ICON_FA_EYE, "  ESP"}, {ICON_FA_USER, "  CHAMS"}, {ICON_FA_SHIELD_HALVED, "  GLOW"}};
+		return {{ICON_FA_EYE, "  ESP"}, {ICON_FA_USER, "  CHAMS"}, {ICON_FA_SHIELD_HALVED, "  GLOW"}};
 	case 2:
-		return {
-				{ICON_FA_WRENCH, "  GENERAL"}, {ICON_FA_GEAR, "  MOVEMENT"}, {ICON_FA_USER, "  SKINS"}};
+		return {{ICON_FA_WRENCH, "  GENERAL"}, {ICON_FA_GEAR, "  MOVEMENT"}, {ICON_FA_USER, "  SKINS"}};
 	case 3:
 		return {{ICON_FA_SHIELD_HALVED, "  AIMBOT"}, {ICON_FA_HAND_POINTER, "  TRIGGER"}};
 	case 4:
@@ -258,7 +265,7 @@ static void accent_glow_rect(ImDrawList* dl, ImVec2 a, ImVec2 b, float rounding,
 	const ImU32 base_tint = tint ? tint : col_accent;
 	const ImVec4 tf = ImGui::ColorConvertU32ToFloat4(base_tint);
 	const int steps = 5;
-	const float base_alpha = 0.14f * std::clamp(alphaMul, 0.0f, 1.0f);
+	const float base_alpha = 0.14f * ui::saturate(alphaMul);
 
 	for (int i = 0; i < steps; ++i)
 	{
@@ -313,7 +320,7 @@ static text_swap_anim& text_swap_state(ImGuiID id, const char* text)
 static void draw_text_swap_left(ImDrawList* dl, ImGuiID id, float left_x, float center_y, ImU32 col, const char* text)
 {
 	text_swap_anim& st = text_swap_state(id, text);
-	float in_t = std::clamp(st.blend, 0.0f, 1.0f);
+	float in_t = ui::saturate(st.blend);
 	float out_t = st.previous.empty() ? 0.0f : (1.0f - in_t);
 	float shift = (1.0f - in_t) * 2.0f;
 
@@ -334,7 +341,7 @@ static void draw_text_swap_left(ImDrawList* dl, ImGuiID id, float left_x, float 
 static void draw_text_swap_right(ImDrawList* dl, ImGuiID id, float right_x, float center_y, ImU32 col, const char* text)
 {
 	text_swap_anim& st = text_swap_state(id, text);
-	float in_t = std::clamp(st.blend, 0.0f, 1.0f);
+	float in_t = ui::saturate(st.blend);
 	float out_t = st.previous.empty() ? 0.0f : (1.0f - in_t);
 	float shift = (1.0f - in_t) * 2.0f;
 

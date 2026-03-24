@@ -26,7 +26,8 @@ void Menu::page_misc()
 	{
 		ImGui::SetCursorScreenPos(ImVec2(lp.x, lp.y + th));
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 3.0f);
-		ImGui::BeginChild("##misc_general", ImVec2(pw, ph - th - 6), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
+		ImGui::BeginChild("##misc_general", ImVec2(pw, ph - th - 6), ImGuiChildFlags_AlwaysUseWindowPadding,
+											ImGuiWindowFlags_None);
 		ImGui::PushItemWidth(-1.0f);
 	}
 
@@ -58,7 +59,8 @@ void Menu::page_misc()
 	{
 		ImGui::SetCursorScreenPos(ImVec2(rp.x, rp.y + th));
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 3.0f);
-		ImGui::BeginChild("##misc_move", ImVec2(pw, ph - th - 6), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
+		ImGui::BeginChild("##misc_move", ImVec2(pw, ph - th - 6), ImGuiChildFlags_AlwaysUseWindowPadding,
+											ImGuiWindowFlags_None);
 		ImGui::PushItemWidth(-1.0f);
 	}
 

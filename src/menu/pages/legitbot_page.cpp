@@ -1,4 +1,4 @@
-#include "menu/menu.h"
+#include "../menu.h"
 
 namespace menu
 {
@@ -24,7 +24,8 @@ void Menu::page_legitbot()
 	{
 		ImGui::SetCursorScreenPos(ImVec2(lp.x, lp.y + th));
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 3.0f);
-		ImGui::BeginChild("##legit_main", ImVec2(pw, ph - th - 6), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
+		ImGui::BeginChild("##legit_main", ImVec2(pw, ph - th - 6), ImGuiChildFlags_AlwaysUseWindowPadding,
+											ImGuiWindowFlags_None);
 		ImGui::PushItemWidth(-1.0f);
 	}
 	{
@@ -55,7 +56,8 @@ void Menu::page_legitbot()
 	{
 		ImGui::SetCursorScreenPos(ImVec2(rp.x, rp.y + th));
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 3.0f);
-		ImGui::BeginChild("##legit_trigger", ImVec2(pw, ph - th - 6), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
+		ImGui::BeginChild("##legit_trigger", ImVec2(pw, ph - th - 6), ImGuiChildFlags_AlwaysUseWindowPadding,
+											ImGuiWindowFlags_None);
 		ImGui::PushItemWidth(-1.0f);
 	}
 	{

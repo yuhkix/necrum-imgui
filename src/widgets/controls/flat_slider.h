@@ -16,7 +16,7 @@ inline bool flat_slider(const char* id, float* v, float lo, float hi, const char
 	ImGui::InvisibleButton("##sl", ImVec2(w, h));
 	if (ImGui::IsItemActive())
 	{
-		float t = std::clamp((ImGui::GetIO().MousePos.x - pos.x) / w, 0.0f, 1.0f);
+		float t = ui::saturate((ImGui::GetIO().MousePos.x - pos.x) / w);
 		*v = lo + t * (hi - lo);
 	}
 	float target_t = (*v - lo) / (hi - lo);
@@ -51,7 +51,7 @@ inline bool flat_slider(const char* id, int* v, int lo, int hi, const char* fmt 
 	ImGui::InvisibleButton("##sl", ImVec2(w, h));
 	if (ImGui::IsItemActive())
 	{
-		float t = std::clamp((ImGui::GetIO().MousePos.x - pos.x) / w, 0.0f, 1.0f);
+		float t = ui::saturate((ImGui::GetIO().MousePos.x - pos.x) / w);
 		*v = lo + (int)std::round(t * (hi - lo));
 	}
 	float target_t = (float)(*v - lo) / (hi - lo);
@@ -89,14 +89,14 @@ inline bool range_slider(const char* id, float* lo, float* hi, float mn, float m
 
 	if (ImGui::IsItemActive())
 	{
-		float mx_t = std::clamp((ImGui::GetIO().MousePos.x - pos.x) / w, 0.0f, 1.0f);
+		float mx_t = ui::saturate((ImGui::GetIO().MousePos.x - pos.x) / w);
 		float mv = mn + mx_t * (mx - mn);
 		float d_lo = fabsf(mx_t - (*lo - mn) / (mx - mn));
 		float d_hi = fabsf(mx_t - (*hi - mn) / (mx - mn));
 		if (d_lo < d_hi)
-			*lo = std::clamp(std::min(mv, *hi - 0.01f), mn, mx);
+			*lo = ui::clamp(std::min(mv, *hi - 0.01f), mn, mx);
 		else
-			*hi = std::clamp(std::max(mv, *lo + 0.01f), mn, mx);
+			*hi = ui::clamp(std::max(mv, *lo + 0.01f), mn, mx);
 	}
 	vis_lo = alerp(vis_lo, (*lo - mn) / (mx - mn));
 	vis_hi = alerp(vis_hi, (*hi - mn) / (mx - mn));
@@ -138,14 +138,14 @@ inline bool range_slider(const char* id, int* lo, int* hi, int mn, int mx, const
 
 	if (ImGui::IsItemActive())
 	{
-		float mx_t = std::clamp((ImGui::GetIO().MousePos.x - pos.x) / w, 0.0f, 1.0f);
+		float mx_t = ui::saturate((ImGui::GetIO().MousePos.x - pos.x) / w);
 		float mv = mn + mx_t * (mx - mn);
 		float d_lo = fabsf(mx_t - (float)(*lo - mn) / (mx - mn));
 		float d_hi = fabsf(mx_t - (float)(*hi - mn) / (mx - mn));
 		if (d_lo < d_hi)
-			*lo = std::clamp((int)std::min(mv, (float)*hi - 1.0f), mn, mx);
+			*lo = ui::clamp((int)std::min(mv, (float)*hi - 1.0f), mn, mx);
 		else
-			*hi = std::clamp((int)std::max(mv, (float)*lo + 1.0f), mn, mx);
+			*hi = ui::clamp((int)std::max(mv, (float)*lo + 1.0f), mn, mx);
 	}
 	vis_lo = alerp(vis_lo, (float)(*lo - mn) / (mx - mn));
 	vis_hi = alerp(vis_hi, (float)(*hi - mn) / (mx - mn));

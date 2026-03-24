@@ -106,7 +106,7 @@ bool hotkey_inline(const char* label, int* key, int* mode)
 			float dot_cx = ip.x + hk_indicator_left + hk_indicator_r;
 			float dot_cy = ip.y + ih * 0.5f;
 			ImVec4 ac = ImGui::ColorConvertU32ToFloat4(col_accent);
-			float dot_t = std::clamp(sel_anim + hov_anim * 0.35f, 0.0f, 1.0f);
+			float dot_t = ui::saturate(sel_anim + hov_anim * 0.35f);
 			ImU32 dot_col =
 					styled(IM_COL32((int)(36 + (ac.x * 255.0f - 36.0f) * dot_t), (int)(36 + (ac.y * 255.0f - 36.0f) * dot_t),
 													(int)(36 + (ac.z * 255.0f - 36.0f) * dot_t), 255));
@@ -114,7 +114,7 @@ bool hotkey_inline(const char* label, int* key, int* mode)
 			if (sel_anim > 0.001f)
 				cdl->AddCircleFilled(ImVec2(dot_cx, dot_cy), 2.0f, styled(col_accent, sel_anim), 12);
 
-			float text_t = std::clamp(sel_anim + hov_anim * 0.30f, 0.0f, 1.0f);
+			float text_t = ui::saturate(sel_anim + hov_anim * 0.30f);
 			ImU32 tc = styled(IM_COL32((int)(155 + (ac.x * 255.0f - 155.0f) * text_t),
 																 (int)(152 + (ac.y * 255.0f - 152.0f) * text_t),
 																 (int)(150 + (ac.z * 255.0f - 150.0f) * text_t), 255));
@@ -135,7 +135,6 @@ bool hotkey_inline(const char* label, int* key, int* mode)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.ClearInputKeys();
-		io.ClearInputCharacters();
 		ImGui::SetKeyOwner(ImGuiKey_Escape, uid);
 		ImGui::ClearActiveID();
 

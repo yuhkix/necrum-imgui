@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "core/fonts/FontAwesome.h"
 #include "core/web_image_imgui.h"
+#include "widgets/ui_framework.h"
 #include "menu/theme.h"
 #include "pch.h"
 #include <algorithm>
@@ -336,7 +337,7 @@ float Menu::draw_bomb_timer_overlay(const ImVec2& pos, float width)
 			float cycle = fmodf((float)ImGui::GetTime(), total + 3.0f);
 			time_left = total - std::min(cycle, total);
 		}
-		float t_norm = std::clamp(time_left / total, 0.0f, 1.0f);
+		float t_norm = ui::saturate(time_left / total);
 
 		float dmg = std::max(0.0f, bomb_predicted_damage_);
 		int hp_after = std::max(0, player_health_ - (int)std::round(dmg));
@@ -418,8 +419,6 @@ void Menu::draw_content(float pw, float ph)
 
 	sync_search_query();
 
-	sync_search_query();
-
 	switch (ui::top_tab_)
 	{
 	case 0:
@@ -493,7 +492,7 @@ void Menu::draw_intro()
 		return;
 	}
 
-	auto saturate = [](float v) { return std::clamp(v, 0.0f, 1.0f); };
+	auto saturate = [](float v) { return ui::saturate(v); };
 
 	auto smoothstep = [&](float a, float b, float v)
 
@@ -629,10 +628,9 @@ void Menu::draw_intro()
 
 			ImVec2 lpos(center.x - lsize * 0.5f, logo_base_y - lsize * 0.5f);
 
-			dl->AddImageRounded(logo_tex, lpos, ImVec2(lpos.x + lsize, lpos.y + lsize), {0, 0}, {1, 1}, IM_COL32(255, 255, 255, (int)(255.0f * logo_alpha)), 12.0f * panel_scale);
-
+			dl->AddImageRounded(logo_tex, lpos, ImVec2(lpos.x + lsize, lpos.y + lsize), {0, 0}, {1, 1},
+													IM_COL32(255, 255, 255, (int)(255.0f * logo_alpha)), 12.0f * panel_scale);
 		}
-
 	}
 
 	if (theme::font_logo && logo_alpha > 0.01f)
@@ -718,7 +716,7 @@ void Menu::render()
 	g_dt = ImGui::GetIO().DeltaTime;
 
 	alpha_ += (target_alpha_ - alpha_) * anim_speed_ * g_dt;
-	alpha_ = std::clamp(alpha_, 0.0f, 1.0f);
+	alpha_ = ui::saturate(alpha_);
 
 	if (std::abs(alpha_ - target_alpha_) < 0.005f)
 		alpha_ = target_alpha_;
@@ -728,7 +726,7 @@ void Menu::render()
 	{
 		float target = show ? 1.0f : 0.0f;
 		alpha += (target - alpha) * anim_speed_ * g_dt;
-		alpha = std::clamp(alpha, 0.0f, 1.0f);
+		alpha = ui::saturate(alpha);
 		if (std::abs(alpha - target) < 0.005f)
 			alpha = target;
 	};
@@ -777,10 +775,8 @@ void Menu::render_main()
 
 	ImGui::SetNextWindowSize(ImVec2(WIN_W, WIN_H), ImGuiCond_Once);
 
-	ImGuiWindowFlags flags =
-			ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
-			ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse |
-			ImGuiWindowFlags_NoResize;
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
+													 ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
 
 	if (esp_dragging_ >= 0 || esp_preview_hold_)
 		flags |= ImGuiWindowFlags_NoMove;
@@ -788,8 +784,7 @@ void Menu::render_main()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha_);
-	ImGui::PushStyleColor(ImGuiCol_WindowBg,
-												ImVec4(0.03f, 0.03f, 0.04f, alpha_));
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.03f, 0.03f, 0.04f, alpha_));
 
 	bool open = true;
 	if (ImGui::Begin("##menu", &open, flags))
@@ -799,22 +794,19 @@ void Menu::render_main()
 		ImDrawList* dl = ImGui::GetWindowDrawList();
 		ImVec2 wp = ImGui::GetWindowPos();
 
-		dl->AddRect(wp, ImVec2(wp.x + ws.x, wp.y + ws.y),
-								styled(IM_COL32(40, 38, 52, 50)), 5.0f);
+		dl->AddRect(wp, ImVec2(wp.x + ws.x, wp.y + ws.y), styled(IM_COL32(40, 38, 52, 50)), 5.0f);
 
 		ui::draw_header(ws.x);
 
 		ImGui::SetCursorPos(ImVec2(0, HEADER_H));
-		ImGui::BeginChild("##sb", ImVec2(SIDEBAR_W, body_h), false,
-											ImGuiWindowFlags_NoScrollbar);
+		ImGui::BeginChild("##sb", ImVec2(SIDEBAR_W, body_h), false, ImGuiWindowFlags_NoScrollbar);
 		ui::draw_sidebar(body_h);
 		ImGui::EndChild();
 
 		ImGui::SameLine(0, 0);
 
 		float cw = ws.x - SIDEBAR_W;
-		ImGui::BeginChild("##ct", ImVec2(cw, body_h), false,
-											ImGuiWindowFlags_NoScrollbar);
+		ImGui::BeginChild("##ct", ImVec2(cw, body_h), false, ImGuiWindowFlags_NoScrollbar);
 
 		ui::draw_content(cw, body_h, [this, cw, body_h]() { this->draw_content(cw, body_h); });
 
@@ -1028,7 +1020,10 @@ void Menu::run_search_pass()
 	int max_hits = 0;
 	int best_side = 0;
 
-	ImGui::Begin("##search_dry_run", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNav);
+	ImGui::Begin("##search_dry_run", nullptr,
+							 ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground |
+									 ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus |
+									 ImGuiWindowFlags_NoNav);
 	ImGui::SetWindowPos(ImVec2(-9999, -9999));
 
 	for (int i = 0; i < 5; ++i)
@@ -1041,19 +1036,30 @@ void Menu::run_search_pass()
 		{
 			ui::search_hits_count_ = 0;
 			ui::side_tab_ = s;
-			
+
 			ImGui::PushID(i * 100 + s);
 			switch (i)
 			{
 			case 0:
-				if (s == 0) page_ragebot();
-				else if (s == 1) page_exploits();
-				else if (s == 2) page_antiaim();
+				if (s == 0)
+					page_ragebot();
+				else if (s == 1)
+					page_exploits();
+				else if (s == 2)
+					page_antiaim();
 				break;
-			case 1: page_visuals(); break;
-			case 2: page_misc(); break;
-			case 3: page_legitbot(); break;
-			case 4: page_settings(); break;
+			case 1:
+				page_visuals();
+				break;
+			case 2:
+				page_misc();
+				break;
+			case 3:
+				page_legitbot();
+				break;
+			case 4:
+				page_settings();
+				break;
 			}
 			ImGui::PopID();
 

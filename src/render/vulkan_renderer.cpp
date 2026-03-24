@@ -54,13 +54,14 @@ bool VulkanRenderer::init(VkInstance instance, VkPhysicalDevice physical_device,
 	init_info.Queue = queue;
 	init_info.PipelineCache = VK_NULL_HANDLE;
 	init_info.DescriptorPool = p_descriptor_pool;
-	init_info.Subpass = 0;
+	init_info.ApiVersion = VK_API_VERSION_1_0;
+	init_info.PipelineInfoMain.Subpass = 0;
 	init_info.MinImageCount = 2;
 	init_info.ImageCount = 2;
-	init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+	init_info.PipelineInfoMain.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 	init_info.Allocator = nullptr;
 	init_info.CheckVkResultFn = nullptr;
-	init_info.RenderPass = render_pass;
+	init_info.PipelineInfoMain.RenderPass = render_pass;
 
 	if (!ImGui_ImplVulkan_Init(&init_info))
 		return false;

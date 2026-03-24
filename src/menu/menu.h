@@ -1,6 +1,6 @@
 #pragma once
-#include "core/fonts/FontAwesome.h"
-#include "widgets/ui_framework.h"
+#include "../core/fonts/FontAwesome.h"
+#include "../widgets/ui_framework.h"
 #include <imgui.h>
 #include <initializer_list>
 #include <string>

@@ -110,8 +110,8 @@ bool flat_color_picker(const char* label, float* hue, float* sat, float* val, fl
 		if (ImGui::IsItemActive())
 		{
 			ImVec2 mp = ImGui::GetIO().MousePos;
-			*sat = std::clamp((mp.x - sv_min.x) / sq_size, 0.0f, 1.0f);
-			*val = 1.0f - std::clamp((mp.y - sv_min.y) / sq_size, 0.0f, 1.0f);
+			*sat = ui::saturate((mp.x - sv_min.x) / sq_size);
+			*val = 1.0f - ui::saturate((mp.y - sv_min.y) / sq_size);
 			changed = true;
 		}
 		float cx = sv_min.x + *sat * sq_size;
@@ -138,7 +138,7 @@ bool flat_color_picker(const char* label, float* hue, float* sat, float* val, fl
 		ImGui::InvisibleButton("##hue", ImVec2(bar_w, sq_size));
 		if (ImGui::IsItemActive())
 		{
-			*hue = std::clamp((ImGui::GetIO().MousePos.y - hm.y) / sq_size, 0.0f, 1.0f) * 360.0f;
+			*hue = ui::saturate((ImGui::GetIO().MousePos.y - hm.y) / sq_size) * 360.0f;
 			changed = true;
 		}
 		float hy = hm.y + (*hue / 360.0f) * sq_size;

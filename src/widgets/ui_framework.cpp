@@ -74,6 +74,7 @@ void draw_search_bar(float w)
 	ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
 	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 0, 0, 0));
 	ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, IM_COL32(0, 0, 0, 0));
+	ImGui::PushStyleColor(ImGuiCol_NavHighlight, IM_COL32(0, 0, 0, 0));
 
 	const float clear_slot_w = (search_query_[0] != '\0') ? 20.0f : 0.0f;
 	ImGui::SetNextItemWidth(box_w - clear_slot_w);
@@ -93,14 +94,14 @@ void draw_search_bar(float w)
 	float& hover_anim = ganim(field_id ^ 0x9F22A5Bu, 0.0f);
 	hover_anim = damp(hover_anim, hovered ? 1.0f : 0.0f, 12.0f);
 
-	ImGui::PopStyleColor(6);
+	ImGui::PopStyleColor(7);
 	ImGui::PopStyleVar(2);
 
 	float focus_ease = focus_anim * focus_anim * (3.0f - 2.0f * focus_anim);
 	float hover_ease = hover_anim * hover_anim * (3.0f - 2.0f * hover_anim);
 	float filled_ease = filled_anim * filled_anim * (3.0f - 2.0f * filled_anim);
 	float interact_ease = std::max(focus_ease, hover_ease);
-	float active_mix = std::clamp(interact_ease * 1.0f + filled_ease * 0.36f, 0.0f, 1.0f);
+	float active_mix = ui::saturate(interact_ease * 1.0f + filled_ease * 0.36f);
 
 	dl->AddRectFilled(ImVec2(bmin.x + 1.0f, bmin.y + 1.0f), ImVec2(bmax.x - 1.0f, bmax.y - 1.0f),
 										styled(col_accent, 0.010f + interact_ease * 0.03f + filled_ease * 0.016f), 3.0f);
@@ -167,7 +168,7 @@ void draw_search_bar(float w)
 		cursor_alpha += 6.0f * g_dt;
 	else
 		cursor_alpha -= 6.0f * g_dt;
-	cursor_alpha = std::clamp(cursor_alpha, 0.0f, 1.0f);
+	cursor_alpha = ui::saturate(cursor_alpha);
 
 	if (cursor_alpha > 0.01f)
 	{

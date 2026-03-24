@@ -87,7 +87,7 @@ bool dd_item(const char* text, bool selected, bool close_on_click, float forced_
 	}
 
 	ImVec4 ac = ImGui::ColorConvertU32ToFloat4(col_accent);
-	float text_t = std::clamp(sel_anim + hov_anim * 0.35f, 0.0f, 1.0f);
+	float text_t = ui::saturate(sel_anim + hov_anim * 0.35f);
 	ImU32 tc =
 			styled(IM_COL32((int)(155 + (ac.x * 255.0f - 155.0f) * text_t), (int)(152 + (ac.y * 255.0f - 152.0f) * text_t),
 											(int)(150 + (ac.z * 255.0f - 150.0f) * text_t), 255));
@@ -134,7 +134,7 @@ bool dd_item_check(const char* text, bool selected, float forced_w)
 	ImU32 sq_fill = styled(IM_COL32((int)(6 + (ac.x * 255.0f - 6.0f) * (sel_anim * 0.85f)),
 																	(int)(6 + (ac.y * 255.0f - 6.0f) * (sel_anim * 0.85f)),
 																	(int)(6 + (ac.z * 255.0f - 6.0f) * (sel_anim * 0.85f)), 255));
-	float br_t = std::clamp(sel_anim, 0.0f, 1.0f);
+	float br_t = ui::saturate(sel_anim);
 	ImU32 sq_brd = styled(IM_COL32((int)(36 + (ac.x * 255.0f - 36.0f) * br_t), (int)(36 + (ac.y * 255.0f - 36.0f) * br_t),
 																 (int)(36 + (ac.z * 255.0f - 36.0f) * br_t), 255));
 	if (sel_anim > 0.001f)
@@ -148,7 +148,7 @@ bool dd_item_check(const char* text, bool selected, float forced_w)
 											styled(col_accent, 0.8f * sel_anim), 1.4f);
 	}
 
-	float text_t = std::clamp(hov_anim * 0.30f, 0.0f, 1.0f);
+	float text_t = ui::saturate(hov_anim * 0.30f);
 	ImU32 tc =
 			styled(IM_COL32((int)(155 + (ac.x * 255.0f - 155.0f) * text_t), (int)(155 + (ac.y * 255.0f - 155.0f) * text_t),
 											(int)(155 + (ac.z * 255.0f - 155.0f) * text_t), 255));
