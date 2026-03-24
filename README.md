@@ -14,7 +14,7 @@ A modern, feature-rich ImGui-based UI framework designed for Windows application
 
 ## ✨ Features
 
-- **Multi-Renderer Support**: Seamless integration with DirectX 9, DirectX 11, OpenGL, and Vulkan
+- **Multi-Renderer Support**: Seamless integration with DirectX 9, DirectX 10, DirectX 11, DirectX 12, OpenGL, and Vulkan
 - **Modern C++20**: Built with the latest C++ standards for optimal performance
 - **Rich Widget Library**: Comprehensive set of UI controls including color pickers, dropdowns, panels, and more
 - **Theme System**: Customizable themes with smooth animations
