@@ -9,7 +9,7 @@
 #include <d3dcompiler.h>
 #include <dwmapi.h>
 #ifdef USE_VULKAN
-#include <vulkan/vulkan.h>
+#include "ext/imgui/backends/vulkan/vulkan.h"
 #endif
 
 #include <string>

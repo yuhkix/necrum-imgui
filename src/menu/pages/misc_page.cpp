@@ -1,4 +1,4 @@
-#include "menu/menu.h"
+#include "../menu.h"
 
 namespace menu
 

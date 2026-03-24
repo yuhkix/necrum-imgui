@@ -1,8 +1,8 @@
 #include "theme.h"
-#include "core/fonts/FontAwesome.h"
-#include "core/fonts/Icons.h"
-#include "pch.h"
-#include <imgui.h>
+#include "../core/fonts/FontAwesome.h"
+#include "../core/fonts/Icons.h"
+#include "../pch.h"
+#include "../ext/imgui/imgui.h"
 #include <string>
 #include <windows.h>
 

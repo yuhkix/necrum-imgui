@@ -1,11 +1,10 @@
 #include "hooks.h"
 #include "dx9_renderer.h"
-#include "menu/menu.h"
+#include "../menu/menu.h"
 
 #include <d3d9.h>
-#include <MinHook.h>
-#include <imgui_impl_win32.h>
-#include <imgui_impl_dx9.h>
+#include "../ext/minhook/MinHook.h"
+#include "../ext/imgui/backends/imgui_impl_dx9.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -66,22 +65,22 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 HRESULT WINAPI h_Reset(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
 {
-    if (!hooks_enabled)
-        return oReset(pDevice, pPresentationParameters);
+	if (!hooks_enabled)
+		return oReset(pDevice, pPresentationParameters);
 
-    if (renderer.is_initialized())
-    {
-        ImGui_ImplDX9_InvalidateDeviceObjects();
-    }
+	if (renderer.is_initialized())
+	{
+		ImGui_ImplDX9_InvalidateDeviceObjects();
+	}
 
-    HRESULT hr = oReset(pDevice, pPresentationParameters);
+	HRESULT hr = oReset(pDevice, pPresentationParameters);
 
-    if (hr == D3D_OK && renderer.is_initialized())
-    {
-        ImGui_ImplDX9_CreateDeviceObjects();
-    }
+	if (hr == D3D_OK && renderer.is_initialized())
+	{
+		ImGui_ImplDX9_CreateDeviceObjects();
+	}
 
-    return hr;
+	return hr;
 }
 
 HRESULT WINAPI h_EndScene(IDirect3DDevice9* pDevice)
@@ -93,8 +92,8 @@ HRESULT WINAPI h_EndScene(IDirect3DDevice9* pDevice)
 	{
 		if (renderer.init(pDevice))
 		{
-            D3DDEVICE_CREATION_PARAMETERS cp;
-            pDevice->GetCreationParameters(&cp);
+			D3DDEVICE_CREATION_PARAMETERS cp;
+			pDevice->GetCreationParameters(&cp);
 			oWndProc = (WNDPROC)SetWindowLongPtrW(cp.hFocusWindow, GWLP_WNDPROC, (LONG_PTR)WndProc);
 		}
 	}
@@ -110,7 +109,6 @@ HRESULT WINAPI h_EndScene(IDirect3DDevice9* pDevice)
 }
 } // namespace
 
-
 bool Hooks::init()
 {
 	if (MH_Initialize() != MH_OK)
@@ -120,34 +118,34 @@ bool Hooks::init()
 	if (!pD3D)
 		return false;
 
-    D3DPRESENT_PARAMETERS d3dpp{};
-    d3dpp.Windowed = TRUE;
-    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
-    d3dpp.hDeviceWindow = GetForegroundWindow();
+	D3DPRESENT_PARAMETERS d3dpp{};
+	d3dpp.Windowed = TRUE;
+	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
+	d3dpp.hDeviceWindow = GetForegroundWindow();
 
-    IDirect3DDevice9* pDevice = nullptr;
-    HRESULT hr = pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow,
-                                    D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pDevice);
-                                    
-    if (FAILED(hr))
-    {
-        pD3D->Release();
-        return false;
-    }
+	IDirect3DDevice9* pDevice = nullptr;
+	HRESULT hr = pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow,
+																	D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pDevice);
 
-    void** p_vtable = *(void***)pDevice;
-    void* p_endscene = p_vtable[42];
-    void* p_reset = p_vtable[16];
+	if (FAILED(hr))
+	{
+		pD3D->Release();
+		return false;
+	}
 
-    pDevice->Release();
-    pD3D->Release();
+	void** p_vtable = *(void***)pDevice;
+	void* p_endscene = p_vtable[42];
+	void* p_reset = p_vtable[16];
+
+	pDevice->Release();
+	pD3D->Release();
 
 	if (MH_CreateHook(p_endscene, &h_EndScene, (LPVOID*)&oEndScene) != MH_OK)
 		return false;
 
-    if (MH_CreateHook(p_reset, &h_Reset, (LPVOID*)&oReset) != MH_OK)
-        return false;
+	if (MH_CreateHook(p_reset, &h_Reset, (LPVOID*)&oReset) != MH_OK)
+		return false;
 
 	if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
 		return false;
@@ -159,12 +157,12 @@ void Hooks::shutdown()
 {
 	hooks_enabled = false;
 
-    if (oWndProc)
-    {
-        D3DDEVICE_CREATION_PARAMETERS cp;
-        // Wait, how to restore wndproc if we don't have focus window anymore?
-        // Actually, DX11 didn't restore wndproc on shutdown either...
-    }
+	if (oWndProc)
+	{
+		D3DDEVICE_CREATION_PARAMETERS cp;
+		// Wait, how to restore wndproc if we don't have focus window anymore?
+		// Actually, DX11 didn't restore wndproc on shutdown either...
+	}
 
 	MH_DisableHook(MH_ALL_HOOKS);
 	MH_Uninitialize();

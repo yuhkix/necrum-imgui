@@ -1,5 +1,5 @@
-#include "menu/esp_preview_helper.h"
-#include "menu/menu.h"
+#include "../esp_preview_helper.h"
+#include "../menu.h"
 
 namespace menu
 

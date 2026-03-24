@@ -1,9 +1,8 @@
 #include "hooks.h"
 #include "dx11_renderer.h"
-#include "menu/menu.h"
+#include "../menu/menu.h"
 
-#include <MinHook.h>
-#include <imgui_impl_win32.h>
+#include "../ext/minhook/MinHook.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 

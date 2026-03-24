@@ -1,8 +1,8 @@
 #pragma once
-#include "widgets/ui_framework.h"
+#include "../widgets/ui_framework.h"
 #include <cmath>
-#include <imgui.h>
-#include <imgui_internal.h>
+#include "../ext/imgui/imgui.h"
+#include "../ext/imgui/imgui_internal.h"
 
 using namespace ui; // Support access to styled() and alpha_mul() functions
 

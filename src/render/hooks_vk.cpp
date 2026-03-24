@@ -1,8 +1,8 @@
 #include "hooks.h"
 #include "vulkan_renderer.h"
-#include "menu/menu.h"
+#include "../menu/menu.h"
 
-#include <MinHook.h>
+#include "../ext/minhook/MinHook.h"
 #include <vulkan/vulkan.h>
 
 namespace renderer

@@ -7,7 +7,7 @@
 #include <thread>
 #include <condition_variable>
 #include <vector>
-#include <imgui.h>
+#include "../ext/imgui/imgui.h"
 #include <functional>
 
 namespace web_image

@@ -1,5 +1,5 @@
 #include "web_image.h"
-#include "render/renderer.h"
+#include "../render/renderer.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <windows.h>

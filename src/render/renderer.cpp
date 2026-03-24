@@ -1,10 +1,10 @@
 #include "renderer.h"
-#include "menu/theme.h"
-#include "pch.h"
+#include "../menu/theme.h"
+#include "../pch.h"
 
-#include <imgui.h>
-#include <imgui_impl_dx11.h>
-#include <imgui_impl_win32.h>
+#include "../ext/imgui/imgui.h"
+#include "../ext/imgui/backends/imgui_impl_dx11.h"
+#include "../ext/imgui/backends/imgui_impl_win32.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 

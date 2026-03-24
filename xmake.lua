@@ -57,7 +57,6 @@ target("necrum_gl")
     -- add_packages("imgui", "minhook")
     add_packages("minhook")
     add_syslinks("opengl32", "glu32", "dwmapi", "advapi32", "user32", "gdi32", "wininet")
-    add_defines("RUBY_DLL")
     
 if is_plat("windows") and is_mode("release") then
     set_runtimes("MD")
@@ -89,7 +88,6 @@ target("necrum_dx11")
     -- add_packages("imgui", "minhook")
     add_packages("minhook")
     add_syslinks("d3d11", "dxgi", "d3dcompiler", "dwmapi", "advapi32", "user32", "gdi32", "wininet")
-    add_defines("RUBY_DLL")
 
 if is_plat("windows") and is_mode("release") then
     set_runtimes("MD")
@@ -121,7 +119,7 @@ target("necrum_vk")
     -- add_packages("imgui", "minhook", "vulkan-headers", "volk")
     add_packages("minhook", "vulkan-headers", "volk")
     add_syslinks("dwmapi", "advapi32", "user32", "gdi32", "wininet")
-    add_defines("RUBY_DLL", "USE_VULKAN", "IMGUI_IMPL_VULKAN_USE_VOLK", "VK_NO_PROTOTYPES", "IMGUI_IMPL_VULKAN_NO_PROTOTYPES")
+    add_defines("USE_VULKAN", "IMGUI_IMPL_VULKAN_USE_VOLK", "VK_NO_PROTOTYPES", "IMGUI_IMPL_VULKAN_NO_PROTOTYPES")
 
 if is_plat("windows") and is_mode("release") then
     set_runtimes("MD")
@@ -153,7 +151,6 @@ target("necrum_dx9")
     -- add_packages("imgui", "minhook")
     add_packages("minhook")
     add_syslinks("d3d9", "dwmapi", "advapi32", "user32", "gdi32", "wininet")
-    add_defines("RUBY_DLL")
 
 if is_plat("windows") and is_mode("release") then
     set_runtimes("MD")

@@ -1,11 +1,11 @@
 #include "dx11_renderer.h"
-#include "menu/theme.h"
-#include "pch.h"
+#include "../menu/theme.h"
+#include "../pch.h"
 #include "core/web_image.h"
 
-#include <imgui.h>
-#include <imgui_impl_dx11.h>
-#include <imgui_impl_win32.h>
+#include "../ext/imgui/imgui.h"
+#include "../ext/imgui/backends/imgui_impl_dx11.h"
+#include "../ext/imgui/backends/imgui_impl_win32.h"
 
 namespace renderer
 {

@@ -1,12 +1,12 @@
 #include "opengl_renderer.h"
-#include "menu/theme.h"
-#include "pch.h"
-#include "core/web_image.h"
+#include "../menu/theme.h"
+#include "../pch.h"
+#include "../core/web_image.h"
 
-#include <imgui.h>
-#include <imgui_impl_opengl3.h>
+#include "../ext/imgui/imgui.h"
+#include "../ext/imgui/backends/imgui_impl_opengl3.h"
 #include <GL/gl.h>
-#include <imgui_impl_win32.h>
+#include "../ext/imgui/backends/imgui_impl_win32.h"
 
 namespace renderer
 {

@@ -1,10 +1,10 @@
 #include "vulkan_renderer.h"
-#include "menu/theme.h"
-#include "pch.h"
+#include "../menu/theme.h"
+#include "../pch.h"
 
-#include <imgui.h>
-#include <imgui_impl_vulkan.h>
-#include <imgui_impl_win32.h>
+#include "../ext/imgui/imgui.h"
+#include "../ext/imgui/backends/imgui_impl_vulkan.h"
+#include "../ext/imgui/backends/imgui_impl_win32.h"
 
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
 #include <volk.h>

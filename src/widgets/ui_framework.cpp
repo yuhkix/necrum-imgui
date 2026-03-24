@@ -1,8 +1,8 @@
 #include "ui_framework.h"
-#include "menu/theme.h"
+#include "../menu/theme.h"
 
-#include "core/web_image.h"
-#include "core/web_image_imgui.h"
+#include "../core/web_image.h"
+#include "../core/web_image_imgui.h"
 
 namespace ui
 {

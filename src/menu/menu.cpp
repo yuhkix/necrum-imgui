@@ -1,9 +1,9 @@
 #include "menu.h"
-#include "core/fonts/FontAwesome.h"
-#include "core/web_image_imgui.h"
-#include "widgets/ui_framework.h"
-#include "menu/theme.h"
-#include "pch.h"
+#include "../core/fonts/FontAwesome.h"
+#include "../core/web_image_imgui.h"
+#include "../widgets/ui_framework.h"
+#include "theme.h"
+#include "../pch.h"
 #include <algorithm>
 #include <cctype>
 #include <chrono>
@@ -12,8 +12,8 @@
 #include <cstring>
 #include <ctime>
 #include <functional>
-#include <imgui.h>
-#include <imgui_internal.h>
+#include "../ext/imgui/imgui.h"
+#include "../ext/imgui/imgui_internal.h"
 #include <unordered_map>
 #include <windows.h>
 
