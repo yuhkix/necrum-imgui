@@ -134,9 +134,10 @@ extern std::string search_query_norm_;
 extern char search_query_[256];
 extern bool search_focus_request_;
 extern bool is_search_pass_;
-extern bool is_searching_all_;
 extern bool tab_has_hits[5];
+extern bool side_tab_has_hits[5][20];
 extern int search_hits_count_;
+extern std::vector<std::string> search_tokens_;
 
 static std::string normalize_search_text(const char* text)
 {
@@ -168,6 +169,22 @@ static std::string normalize_search_text(const char* text)
 inline void sync_search_query()
 {
 	search_query_norm_ = normalize_search_text(search_query_);
+	search_tokens_.clear();
+	size_t start = 0;
+	while (start < search_query_norm_.length())
+	{
+		size_t end = search_query_norm_.find(' ', start);
+		if (end == std::string::npos)
+		{
+			search_tokens_.push_back(search_query_norm_.substr(start));
+			break;
+		}
+		if (end > start)
+		{
+			search_tokens_.push_back(search_query_norm_.substr(start, end - start));
+		}
+		start = end + 1;
+	}
 }
 
 inline bool has_search_query()
@@ -180,18 +197,25 @@ inline bool search_match(std::initializer_list<const char*> terms)
 	if (!has_search_query())
 		return !is_search_pass_;
 
+	std::string combined_terms;
 	for (const char* term : terms)
 	{
-		if (!term)
-			continue;
-		if (normalize_search_text(term).find(search_query_norm_) != std::string::npos)
+		if (term)
 		{
-			if (is_search_pass_)
-				search_hits_count_++;
-			return true;
+			combined_terms += normalize_search_text(term);
+			combined_terms += " ";
 		}
 	}
-	return false;
+
+	for (const auto& token : search_tokens_)
+	{
+		if (combined_terms.find(token) == std::string::npos)
+			return false;
+	}
+
+	if (is_search_pass_)
+		search_hits_count_++;
+	return true;
 }
 
 inline bool page_has_search_hits(int top_tab, int side_tab,
@@ -205,7 +229,17 @@ inline bool page_has_search_hits(int top_tab, int side_tab,
 	{
 		for (const auto& term : page_search_terms[top_tab][side_tab])
 		{
-			if (normalize_search_text(term.c_str()).find(search_query_norm_) != std::string::npos)
+			std::string tnorm = normalize_search_text(term.c_str());
+			bool match = true;
+			for (const auto& token : search_tokens_)
+			{
+				if (tnorm.find(token) == std::string::npos)
+				{
+					match = false;
+					break;
+				}
+			}
+			if (match)
 				return true;
 		}
 	}

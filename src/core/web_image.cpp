@@ -10,6 +10,13 @@
 
 namespace web_image
 {
+CreateTextureCallback g_create_texture_cb = nullptr;
+
+void set_texture_create_callback(CreateTextureCallback cb)
+{
+	g_create_texture_cb = std::move(cb);
+}
+
 WebImageCache::WebImageCache()
 {
 	placeholder_ = create_gray_placeholder();
@@ -184,6 +191,9 @@ bool WebImageCache::download_image(const std::string& url, std::vector<unsigned 
 
 ImTextureID WebImageCache::create_texture(unsigned char* pixels, int width, int height)
 {
+	if (g_create_texture_cb)
+		return g_create_texture_cb(pixels, width, height);
+
 	auto device = renderer::Renderer::get_device();
 	if (!device)
 		return 0;

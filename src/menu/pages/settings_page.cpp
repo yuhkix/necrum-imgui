@@ -18,7 +18,7 @@ void Menu::page_settings()
 
 	float ah = ImGui::GetContentRegionAvail().y;
 
-	float pad = 6.0f, gap = 6.0f;
+	float pad = 16.0f, gap = 16.0f;
 
 	float pw = (aw - pad * 2 - gap) * 0.5f;
 
@@ -29,18 +29,18 @@ void Menu::page_settings()
 
 	ImVec2 lp(cur.x + pad, cur.y);
 
-	if (!is_searching_all_)
+	if (true)
 		draw_panel(dl, lp, ImVec2(lp.x + pw, lp.y + ph), "UI Settings");
 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(28, 28));
-	if (!is_searching_all_)
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(24, 16));
+	if (true)
 	{
-		ImGui::SetCursorScreenPos(ImVec2(lp.x + 10, lp.y + th));
+		ImGui::SetCursorScreenPos(ImVec2(lp.x, lp.y + th));
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 3.0f);
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, IM_COL32(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, styled(col_groove_brd));
-		ImGui::BeginChild("##sui", ImVec2(pw - 14, ph - th - 6), false, ImGuiWindowFlags_None);
-		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.85f);
+		ImGui::BeginChild("##sui", ImVec2(pw, ph - th - 6), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
+		ImGui::PushItemWidth(-1.0f);
 	}
 
 	{
@@ -66,7 +66,7 @@ void Menu::page_settings()
 
 			ctrl_label("Preview");
 
-			anim_graph("##ag", pw - 24, 50, anim_speed_);
+			anim_graph("##ag", ImGui::GetContentRegionAvail().x, 50, anim_speed_);
 
 			any_left = true;
 		}
@@ -173,7 +173,7 @@ void Menu::page_settings()
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
 
-			if (show_replay && ImGui::Button("Replay Intro", ImVec2(pw - 24, 24)))
+			if (show_replay && ImGui::Button("Replay Intro", ImVec2(ImGui::GetContentRegionAvail().x, 24)))
 
 			{
 
@@ -184,7 +184,7 @@ void Menu::page_settings()
 
 			if (show_error_n &&
 
-					ImGui::Button("Error Notification", ImVec2(pw - 24, 24)))
+					ImGui::Button("Error Notification", ImVec2(ImGui::GetContentRegionAvail().x, 24)))
 
 			{
 
@@ -197,7 +197,7 @@ void Menu::page_settings()
 
 			if (show_info_n &&
 
-					ImGui::Button("Info Notification", ImVec2(pw - 24, 24)))
+					ImGui::Button("Info Notification", ImVec2(ImGui::GetContentRegionAvail().x, 24)))
 
 			{
 
@@ -210,7 +210,7 @@ void Menu::page_settings()
 
 			if (show_success_n &&
 
-					ImGui::Button("Success Notification", ImVec2(pw - 24, 24)))
+					ImGui::Button("Success Notification", ImVec2(ImGui::GetContentRegionAvail().x, 24)))
 
 			{
 
@@ -223,7 +223,7 @@ void Menu::page_settings()
 
 			if (show_warn_n &&
 
-					ImGui::Button("Warning Notification", ImVec2(pw - 24, 24)))
+					ImGui::Button("Warning Notification", ImVec2(ImGui::GetContentRegionAvail().x, 24)))
 
 			{
 
@@ -241,11 +241,11 @@ void Menu::page_settings()
 			any_left = true;
 		}
 
-		if (!any_left && ui::has_search_query() && !is_searching_all_)
+		if (!any_left && ui::has_search_query())
 			draw_search_empty_hint("No matches in this section.");
 	}
 
-	if (!is_searching_all_)
+	if (true)
 	{
 		ImGui::PopItemWidth();
 		ImGui::EndChild();
@@ -258,16 +258,16 @@ void Menu::page_settings()
 	}
 
 	ImVec2 rp(lp.x + pw + gap, cur.y);
-	if (!is_searching_all_)
+	if (true)
 		draw_panel(dl, rp, ImVec2(rp.x + pw, rp.y + ph), "Config System");
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(28, 12));
-	if (!is_searching_all_)
+	if (true)
 	{
-		ImGui::SetCursorScreenPos(ImVec2(rp.x + 10, rp.y + th));
+		ImGui::SetCursorScreenPos(ImVec2(rp.x, rp.y + th));
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 3.0f);
-		ImGui::BeginChild("##scfg", ImVec2(pw - 14, ph - th - 6), false, ImGuiWindowFlags_None);
-		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.85f);
+		ImGui::BeginChild("##scfg", ImVec2(pw, ph - th - 6), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
+		ImGui::PushItemWidth(-1.0f);
 	}
 
 	{
@@ -292,7 +292,7 @@ void Menu::page_settings()
 
 				remaining = 60.0f;
 
-			flat_listbox("##cfgsel", &config_sel_, config_items, 5, remaining, pw - 24);
+			flat_listbox("##cfgsel", &config_sel_, config_items, 5, remaining, ImGui::GetContentRegionAvail().x);
 
 			any_right = true;
 		}
@@ -327,7 +327,7 @@ void Menu::page_settings()
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
 
-			if (show_save && ImGui::Button("Save Config", ImVec2(pw - 24, btn_h)))
+			if (show_save && ImGui::Button("Save Config", ImVec2(ImGui::GetContentRegionAvail().x, btn_h)))
 
 			{
 
@@ -338,7 +338,7 @@ void Menu::page_settings()
 				add_notification(buf, NotifyType::_SUCCESS);
 			}
 
-			if (show_load && ImGui::Button("Load Config", ImVec2(pw - 24, btn_h)))
+			if (show_load && ImGui::Button("Load Config", ImVec2(ImGui::GetContentRegionAvail().x, btn_h)))
 
 			{
 
@@ -356,11 +356,11 @@ void Menu::page_settings()
 			any_right = true;
 		}
 
-		if (!any_right && ui::has_search_query() && !is_searching_all_)
+		if (!any_right && ui::has_search_query())
 			draw_search_empty_hint("No matches in this section.");
 	}
 
-	if (!is_searching_all_)
+	if (true)
 	{
 		ImGui::PopItemWidth();
 		ImGui::EndChild();

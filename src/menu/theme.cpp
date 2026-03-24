@@ -58,9 +58,9 @@ void Apply()
 
 	// Geometry
 	s.WindowPadding = {0.0f, 0.0f};
-	s.FramePadding = {6.0f, 3.0f};
-	s.ItemSpacing = {8.0f, 3.5f};
-	s.ItemInnerSpacing = {4.0f, 4.0f};
+	s.FramePadding = {8.0f, 5.0f};
+	s.ItemSpacing = {10.0f, 10.0f};
+	s.ItemInnerSpacing = {6.0f, 6.0f};
 	s.ScrollbarSize = 10.0f;
 	s.GrabMinSize = 8.0f;
 	s.WindowBorderSize = 0.0f;

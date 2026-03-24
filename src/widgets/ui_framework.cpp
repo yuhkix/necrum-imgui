@@ -14,9 +14,10 @@ std::string search_query_norm_;
 char search_query_[256] = {0};
 bool search_focus_request_ = false;
 bool is_search_pass_ = false;
-bool is_searching_all_ = false;
 int search_hits_count_ = 0;
+std::vector<std::string> search_tokens_;
 bool tab_has_hits[5] = {false};
+bool side_tab_has_hits[5][20] = {false};
 
 int top_tab_ = 0;
 int side_tab_ = 0;
@@ -217,24 +218,6 @@ void draw_header(float w)
 	dl->AddRectFilled(wp, ImVec2(wp.x + w, wp.y + HEADER_H), styled(IM_COL32(14, 14, 14, 255)), 5.0f,
 										ImDrawFlags_RoundCornersTop);
 
-	if (has_search_query())
-	{
-		bool current_has_hits = tab_has_hits[top_tab_];
-		if (!current_has_hits)
-		{
-			// Find first tab with hits
-			for (int t = 0; t < 5; ++t)
-			{
-				if (tab_has_hits[t])
-				{
-					top_tab_ = t;
-					side_tab_ = 0; // reset side tab when switching via search
-					break;
-				}
-			}
-		}
-	}
-
 	const char* logo_url = "https://i.ibb.co/k2tJg9Gx/necrum.png";
 	ImTextureID logo_tex = ::web_image::get_web_image(logo_url);
 	float lx = wp.x + 9, ly = wp.y + (HEADER_H - 32) * 0.5f;
@@ -327,7 +310,7 @@ void draw_sidebar(float h)
 	visible_rows.reserve(items.size());
 	for (int i = 0; i < (int)items.size(); ++i)
 	{
-		if (!has_search_query() || search_match({items[i].label}))
+		if (!has_search_query() || side_tab_has_hits[top_tab_][i] || search_match({items[i].label}))
 			visible_rows.push_back(i);
 	}
 

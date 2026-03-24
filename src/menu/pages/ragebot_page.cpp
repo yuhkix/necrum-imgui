@@ -21,23 +21,23 @@ void Menu::page_ragebot()
 	float aw = ImGui::GetContentRegionAvail().x;
 	float ah = ImGui::GetContentRegionAvail().y;
 
-	float pad = 6.0f, gap = 6.0f;
+	float pad = 16.0f, gap = 16.0f;
 	float pw = (aw - pad * 2 - gap) * 0.5f;
 	float ph = ah - pad;
 	float th = 30.0f;
 
 	ImVec2 lp(cur.x + pad, cur.y);
 
-	if (!is_searching_all_)
+	if (true)
 		draw_panel(dl, lp, ImVec2(lp.x + pw, lp.y + ph), "Static");
 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(28, 28));
-	if (!is_searching_all_)
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(24, 16));
+	if (true)
 	{
-		ImGui::SetCursorScreenPos(ImVec2(lp.x + 10, lp.y + th));
+		ImGui::SetCursorScreenPos(ImVec2(lp.x, lp.y + th));
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 3.0f);
-		ImGui::BeginChild("##rcc", ImVec2(pw - 14, ph - th - 6), false, ImGuiWindowFlags_None);
-		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.85f);
+		ImGui::BeginChild("##rcc", ImVec2(pw, ph - th - 6), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
+		ImGui::PushItemWidth(-1.0f);
 	}
 
 	{
@@ -78,11 +78,11 @@ void Menu::page_ragebot()
 			any_left = true;
 		}
 
-		if (!any_left && ui::has_search_query() && !is_searching_all_)
+		if (!any_left && ui::has_search_query())
 			draw_search_empty_hint("No matches in this section.");
 	}
 
-	if (!is_searching_all_)
+	if (true)
 	{
 		ImGui::PopItemWidth();
 		ImGui::EndChild();
@@ -92,16 +92,16 @@ void Menu::page_ragebot()
 	ImGui::PopStyleVar(); // WindowPadding
 
 	ImVec2 rp(lp.x + pw + gap, cur.y);
-	if (!is_searching_all_)
+	if (true)
 		draw_panel(dl, rp, ImVec2(rp.x + pw, rp.y + ph), "Accuracy");
 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(28, 28));
-	if (!is_searching_all_)
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(24, 16));
+	if (true)
 	{
-		ImGui::SetCursorScreenPos(ImVec2(rp.x + 10, rp.y + th));
+		ImGui::SetCursorScreenPos(ImVec2(rp.x, rp.y + th));
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 3.0f);
-		ImGui::BeginChild("##rac", ImVec2(pw - 14, ph - th - 6), false, ImGuiWindowFlags_None);
-		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.85f);
+		ImGui::BeginChild("##rac", ImVec2(pw, ph - th - 6), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
+		ImGui::PushItemWidth(-1.0f);
 	}
 
 	{
@@ -160,11 +160,11 @@ void Menu::page_ragebot()
 			any_right = true;
 		}
 
-		if (!any_right && ui::has_search_query() && !is_searching_all_)
+		if (!any_right && ui::has_search_query())
 			draw_search_empty_hint("No matches in this section.");
 	}
 
-	if (!is_searching_all_)
+	if (true)
 	{
 		ImGui::EndChild();
 		ImGui::PopStyleVar();

@@ -20,7 +20,7 @@ void Menu::page_visuals()
 
 	float ah = ImGui::GetContentRegionAvail().y;
 
-	float pad = 6.0f, gap = 6.0f;
+	float pad = 16.0f, gap = 16.0f;
 
 	float pw = (aw - pad * 2 - gap) * 0.5f;
 
@@ -74,18 +74,19 @@ void Menu::page_visuals()
 
 	ImVec2 lp_max(lp.x + pw, lp.y + ph);
 
-	if (!is_searching_all_ || ui::search_match({"esp", "preview", "visuals"}))
+	if (true)
+	{
 		draw_panel(dl, lp, lp_max, "ESP Preview");
 
-	float preview_x = lp.x + 2;
+		float preview_x = lp.x + 2;
 
-	float preview_y = lp.y + 27;
+		float preview_y = lp.y + 27;
 
-	float preview_w = pw - 4;
+		float preview_w = pw - 4;
 
-	float preview_h = ph - 29;
+		float preview_h = ph - 29;
 
-	ImGui::SetCursorScreenPos(ImVec2(preview_x, preview_y));
+		ImGui::SetCursorScreenPos(ImVec2(preview_x, preview_y));
 
 	ImGui::InvisibleButton("##esp_preview_hit", ImVec2(preview_w, preview_h),
 
@@ -1354,24 +1355,22 @@ void Menu::page_visuals()
 		dl->AddText({mouse.x + 14, mouse.y}, styled(col_accent), drag_label);
 	}
 
-	if (!is_searching_all_)
-	{
 		dl->PopClipRect();
 	}
 
 	ImVec2 rp(lp.x + pw + gap, cur.y);
-	if (!is_searching_all_)
+	if (true)
 		draw_panel(dl, rp, ImVec2(rp.x + pw, rp.y + ph), "ESP Settings");
 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(28, 28));
-	if (!is_searching_all_)
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(24, 16));
+	if (true)
 	{
-		ImGui::SetCursorScreenPos(ImVec2(rp.x + 10, rp.y + th));
+		ImGui::SetCursorScreenPos(ImVec2(rp.x, rp.y + th));
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 3.0f);
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, IM_COL32(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, styled(col_groove_brd));
-		ImGui::BeginChild("##esp_settings", ImVec2(pw - 14, ph - th - 6), false, ImGuiWindowFlags_None);
-		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.85f);
+		ImGui::BeginChild("##esp_settings", ImVec2(pw, ph - th - 6), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
+		ImGui::PushItemWidth(-1.0f);
 	}
 
 	{
@@ -1474,11 +1473,11 @@ void Menu::page_visuals()
 			any_right = true;
 		}
 
-		if (!any_right && ui::has_search_query() && !is_searching_all_)
+		if (!any_right && ui::has_search_query())
 			draw_search_empty_hint("No matches in this section.");
 	}
 
-	if (!is_searching_all_)
+	if (true)
 	{
 		ImGui::PopItemWidth();
 		ImGui::EndChild();

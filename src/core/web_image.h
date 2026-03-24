@@ -8,9 +8,13 @@
 #include <condition_variable>
 #include <vector>
 #include <imgui.h>
+#include <functional>
 
 namespace web_image
 {
+using CreateTextureCallback = std::function<ImTextureID(unsigned char* pixels, int width, int height)>;
+void set_texture_create_callback(CreateTextureCallback cb);
+
 class WebImageCache
 {
 public:

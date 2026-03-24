@@ -1,10 +1,14 @@
 #include "pch.h"
 #include "render/hooks.h"
+#include "core/console.h"
 
 DWORD WINAPI MainThread(LPVOID lpParam)
 {
+	core::Console::Init();
+
 	if (!renderer::Hooks::init())
 	{
+		core::Console::Shutdown();
 		return 1;
 	}
 
@@ -18,6 +22,7 @@ DWORD WINAPI MainThread(LPVOID lpParam)
 	}
 
 	renderer::Hooks::shutdown();
+	core::Console::Shutdown();
 	FreeLibraryAndExitThread((HMODULE)lpParam, 0);
 	return 0;
 }

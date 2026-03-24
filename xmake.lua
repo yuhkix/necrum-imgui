@@ -42,7 +42,7 @@ target("necrum_gl")
     
     add_files("src/menu/**.cpp", "src/widgets/**.cpp")
     add_files("src/render/opengl_renderer.cpp", "src/render/hooks_gl.cpp", "src/dllmain.cpp")
-    add_files("src/core/web_image.cpp")
+    add_files("src/core/**.cpp")
     add_headerfiles("src/**.h")
     add_includedirs("src")
     
@@ -70,7 +70,7 @@ target("necrum_dx11")
     
     add_files("src/menu/**.cpp", "src/widgets/**.cpp")
     add_files("src/render/dx11_renderer.cpp", "src/render/hooks_dx11.cpp", "src/dllmain.cpp")
-    add_files("src/core/web_image.cpp")
+    add_files("src/core/**.cpp")
     add_headerfiles("src/**.h")
     add_includedirs("src")
     
@@ -98,7 +98,7 @@ target("necrum_vk")
     
     add_files("src/menu/**.cpp", "src/widgets/**.cpp")
     add_files("src/render/vulkan_renderer.cpp", "src/render/hooks_vk.cpp", "src/dllmain.cpp")
-    add_files("src/core/web_image.cpp")
+    add_files("src/core/**.cpp")
     add_headerfiles("src/**.h")
     add_includedirs("src")
     

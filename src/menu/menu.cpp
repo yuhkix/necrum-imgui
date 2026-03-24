@@ -421,11 +421,7 @@ void Menu::draw_content(float pw, float ph)
 
 	sync_search_query();
 
-	if (ui::has_search_query())
-	{
-		page_search_results();
-		return;
-	}
+	sync_search_query();
 
 	switch (ui::top_tab_)
 	{
@@ -1040,7 +1036,11 @@ void Menu::run_search_pass()
 	if (!ui::has_search_query())
 	{
 		for (int i = 0; i < 5; ++i)
+		{
 			ui::tab_has_hits[i] = true;
+			for (int s = 0; s < 20; ++s)
+				ui::side_tab_has_hits[i][s] = true;
+		}
 		return;
 	}
 
@@ -1048,89 +1048,67 @@ void Menu::run_search_pass()
 	int old_top = ui::top_tab_;
 	int old_side = ui::side_tab_;
 
+	int best_tab = -1;
+	int max_hits = 0;
+	int best_side = 0;
+
+	ImGui::Begin("##search_dry_run", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNav);
+	ImGui::SetWindowPos(ImVec2(-9999, -9999));
+
 	for (int i = 0; i < 5; ++i)
 	{
-		ui::search_hits_count_ = 0;
 		ui::top_tab_ = i;
-
+		int group_hits = 0;
 		int sides = ui::side_counts[i];
+
 		for (int s = 0; s < sides; ++s)
 		{
+			ui::search_hits_count_ = 0;
 			ui::side_tab_ = s;
+			
+			ImGui::PushID(i * 100 + s);
 			switch (i)
 			{
 			case 0:
-				page_ragebot();
-				page_exploits();
-				page_antiaim();
+				if (s == 0) page_ragebot();
+				else if (s == 1) page_exploits();
+				else if (s == 2) page_antiaim();
 				break;
-			case 1:
-				page_visuals();
-				break;
-			case 2:
-				page_misc();
-				break;
-			case 3:
-				page_legitbot();
-				break;
-			case 4:
-				page_settings();
-				break;
+			case 1: page_visuals(); break;
+			case 2: page_misc(); break;
+			case 3: page_legitbot(); break;
+			case 4: page_settings(); break;
+			}
+			ImGui::PopID();
+
+			ui::side_tab_has_hits[i][s] = (ui::search_hits_count_ > 0);
+			group_hits += ui::search_hits_count_;
+
+			if (ui::search_hits_count_ > max_hits)
+			{
+				max_hits = ui::search_hits_count_;
+				best_tab = i;
+				best_side = s;
 			}
 		}
-		ui::tab_has_hits[i] = (ui::search_hits_count_ > 0);
+		ui::tab_has_hits[i] = (group_hits > 0);
 	}
 
-	ui::top_tab_ = old_top;
-	ui::side_tab_ = old_side;
-	ui::is_search_pass_ = false;
-}
+	ImGui::End();
 
-void Menu::page_search_results()
-{
-	ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 3.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
-	ImGui::BeginChild("##global_search", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_None);
+	if (best_tab != -1)
 	{
-		ui::is_searching_all_ = true;
-
-		// Render all pages in a flattened view
-		auto section = [&](const char* name, void (Menu::*fn)())
-		{
-			// Dry run to see if this page has any matches
-			int old_hits = ui::search_hits_count_;
-			ui::search_hits_count_ = 0;
-			ui::is_search_pass_ = true;
-			(this->*fn)();
-			int page_hits = ui::search_hits_count_;
-			ui::is_search_pass_ = false;
-			ui::search_hits_count_ = old_hits + page_hits;
-
-			if (page_hits > 0)
-			{
-				ImGui::PushStyleColor(ImGuiCol_Text, styled(col_accent));
-				ImGui::TextUnformatted(name);
-				ImGui::PopStyleColor();
-				ImGui::Separator();
-				ImGui::Spacing();
-				(this->*fn)();
-				ImGui::Spacing();
-				ImGui::Spacing();
-			}
-		};
-
-		section("Ragebot", &Menu::page_ragebot);
-		section("Exploits", &Menu::page_exploits);
-		section("Anti-Aim", &Menu::page_antiaim);
-		section("Visuals", &Menu::page_visuals);
-		section("Misc", &Menu::page_misc);
-		section("Legitbot", &Menu::page_legitbot);
-		section("Settings", &Menu::page_settings);
-
-		ui::is_searching_all_ = false;
+		ui::top_tab_ = best_tab;
+		ui::side_tab_ = best_side;
 	}
-	ImGui::EndChild();
-	ImGui::PopStyleVar(2); // ScrollbarSize, WindowPadding
+	else
+	{
+		ui::top_tab_ = old_top;
+		ui::side_tab_ = old_side;
+	}
+
+	ui::is_search_pass_ = false;
+	ui::search_hits_count_ = 0;
 }
 
 std::string Menu::get_spectator_avatar_url(const std::string& name)

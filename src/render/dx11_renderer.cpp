@@ -1,6 +1,7 @@
 #include "dx11_renderer.h"
 #include "menu/theme.h"
 #include "pch.h"
+#include "core/web_image.h"
 
 #include <imgui.h>
 #include <imgui_impl_dx11.h>
@@ -41,6 +42,37 @@ bool DX11Renderer::init(IDXGISwapChain* swap_chain)
 
 	create_render_target(swap_chain);
 	theme::Apply();
+
+	web_image::set_texture_create_callback([this](unsigned char* pixels, int width, int height) -> ImTextureID {
+		if (!this->p_device) return 0;
+		D3D11_TEXTURE2D_DESC desc{};
+		desc.Width = width;
+		desc.Height = height;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.SampleDesc.Count = 1;
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+		ID3D11Texture2D* texture = nullptr;
+		D3D11_SUBRESOURCE_DATA subResource{};
+		subResource.pSysMem = pixels;
+		subResource.SysMemPitch = width * 4;
+
+		if (FAILED(this->p_device->CreateTexture2D(&desc, &subResource, &texture)))
+			return 0;
+
+		ID3D11ShaderResourceView* srv = nullptr;
+		if (FAILED(this->p_device->CreateShaderResourceView(texture, nullptr, &srv)))
+		{
+			texture->Release();
+			return 0;
+		}
+
+		texture->Release();
+		return (ImTextureID)srv;
+	});
 
 	initialized = true;
 	return true;
