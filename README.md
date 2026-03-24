@@ -4,7 +4,7 @@
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B20)
 [![xmake](https://img.shields.io/badge/Build-xmake-green.svg)](https://xmake.io/)
 
-A modern, feature-rich ImGui-based UI framework designed for Windows applications with support for multiple rendering backends including DirectX 9, DirectX 11, OpenGL, and Vulkan.
+A modern, feature-rich ImGui-based UI framework designed for Windows applications with support for multiple rendering backends including DirectX 9, DirectX 10, DirectX 11, DirectX 12, OpenGL, and Vulkan.
 
 > [!IMPORTANT]
 > **Work in Progress**: This framework is currently under active development and is intended to be an easy-to-use solution for creating beautiful, custom ImGui menus.
