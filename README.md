@@ -4,11 +4,11 @@
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B20)
 [![xmake](https://img.shields.io/badge/Build-xmake-green.svg)](https://xmake.io/)
 
-A modern, feature-rich ImGui-based UI framework designed for Windows applications with support for multiple rendering backends including DirectX 11, OpenGL, and Vulkan.
+A modern, feature-rich ImGui-based UI framework designed for Windows applications with support for multiple rendering backends including DirectX 9, DirectX 11, OpenGL, and Vulkan.
 
 ## ✨ Features
 
-- **Multi-Renderer Support**: Seamless integration with DirectX 11, OpenGL, and Vulkan
+- **Multi-Renderer Support**: Seamless integration with DirectX 9, DirectX 11, OpenGL, and Vulkan
 - **Modern C++20**: Built with the latest C++ standards for optimal performance
 - **Rich Widget Library**: Comprehensive set of UI controls including color pickers, dropdowns, panels, and more
 - **Theme System**: Customizable themes with smooth animations
@@ -47,6 +47,7 @@ xmake
 
 - `necrum` - Main binary application
 - `necrum_gl` - OpenGL shared library (DLL)
+- `necrum_dx9` - DirectX9 shared library (DLL)
 - `necrum_dx11` - DirectX11 shared library (DLL)
 - `necrum_vk` - Vulkan shared library (DLL)
 
@@ -70,6 +71,7 @@ Menu::Render();
 
 The framework automatically detects and uses the appropriate renderer based on your application's graphics API:
 
+- **DirectX 9**: For D3D9 applications
 - **DirectX 11**: For D3D11 applications
 - **OpenGL**: For OpenGL-based applications
 - **Vulkan**: For Vulkan applications
