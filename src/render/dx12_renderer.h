@@ -3,6 +3,7 @@
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <vector>
+#include <functional>
 
 namespace renderer
 {
@@ -36,6 +37,7 @@ private:
 	
 	std::vector<FrameContext> m_frame_contexts;
 	std::vector<ID3D12Resource*> m_main_render_target_resources;
+	UINT m_srv_heap_next_slot = 1; // Slot 0 is reserved for ImGui font
 	UINT m_buffer_count = 0;
 	UINT m_frame_index = 0;
 
@@ -45,6 +47,7 @@ private:
 	void cleanup_render_target();
 	void wait_for_last_submitted_frame();
 	FrameContext* wait_for_next_frame_resources();
+	void execute_one_shot(const std::function<void(ID3D12GraphicsCommandList*)>& callback);
 };
 
 } // namespace renderer
