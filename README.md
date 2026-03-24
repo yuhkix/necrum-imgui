@@ -94,6 +94,7 @@ panel->AddControl(std::make_shared<Slider>("Opacity", 0.0f, 1.0f));
 ```
 src/
 ├── core/           # Core utilities (image loading, etc.)
+├── ext/            # External libraries (ImGui, MinHook, etc.)
 ├── menu/           # Menu system and pages
 ├── render/         # Rendering backends and hooks
 ├── widgets/        # UI controls and framework
