@@ -12,11 +12,10 @@ target("necrum")
     add_includedirs("src")
 
     add_files("src/**.cpp")
-    remove_files("src/dllmain.cpp", "src/render/opengl_renderer.cpp", "src/render/hooks_gl.cpp")
-    remove_files("src/render/dx9_renderer.cpp", "src/render/hooks_dx9.cpp")
-    remove_files("src/render/dx11_renderer.cpp", "src/render/hooks_dx11.cpp")
-    remove_files("src/render/vulkan_renderer.cpp", "src/render/hooks_vk.cpp")
-    remove_files("src/ext/imgui/backends/imgui_impl_vulkan.cpp", "src/ext/imgui/backends/imgui_impl_opengl3.cpp", "src/ext/imgui/backends/imgui_impl_dx9.cpp")
+    remove_files("src/dllmain.cpp", "src/render/hooks_*.cpp")
+    remove_files("src/render/dx9_renderer.cpp", "src/render/dx10_renderer.cpp", "src/render/dx11_renderer.cpp", "src/render/dx12_renderer.cpp")
+    remove_files("src/render/vulkan_renderer.cpp", "src/render/opengl_renderer.cpp")
+    remove_files("src/ext/imgui/backends/imgui_impl_vulkan.cpp", "src/ext/imgui/backends/imgui_impl_opengl3.cpp", "src/ext/imgui/backends/imgui_impl_dx9.cpp", "src/ext/imgui/backends/imgui_impl_dx10.cpp", "src/ext/imgui/backends/imgui_impl_dx12.cpp")
     add_headerfiles("src/**.h")
     add_includedirs("src/ext/imgui", "src/ext/imgui/backends")
     add_files("src/ext/imgui/imgui*.cpp")
@@ -146,6 +145,65 @@ target("necrum_dx9")
     add_files("src/ext/minhook/*.c", "src/ext/minhook/hde/*.c")
     
     add_syslinks("d3d9", "dwmapi", "advapi32", "user32", "gdi32", "wininet")
+
+if is_plat("windows") and is_mode("release") then
+    set_runtimes("MD")
+    set_targetdir("build/release/")
+    set_objectdir("build/release/intermediates/")
+    set_dependir("build/release/intermediates/")
+    set_optimize("smallest")
+    add_cxflags("/bigobj")
+else
+    set_runtimes("MDd")
+    set_targetdir("build/debug/")
+    set_objectdir("build/debug/intermediates/")
+    set_dependir("build/debug/intermediates/")
+end
+target("necrum_dx10")
+    set_kind("shared")
+    set_pcheader("src/pch.h")
+    
+    add_files("src/menu/**.cpp", "src/widgets/**.cpp")
+    add_files("src/render/dx10_renderer.cpp", "src/render/hooks_dx10.cpp", "src/dllmain.cpp")
+    add_files("src/core/**.cpp")
+    add_headerfiles("src/**.h")
+    add_includedirs("src")
+    add_includedirs("src/ext/imgui", "src/ext/imgui/backends", "src/ext/minhook")
+    add_files("src/ext/imgui/imgui*.cpp")
+    add_files("src/ext/imgui/backends/imgui_impl_win32.cpp", "src/ext/imgui/backends/imgui_impl_dx10.cpp")
+    add_files("src/ext/minhook/*.c", "src/ext/minhook/hde/*.c")
+    
+    add_syslinks("d3d10", "dxgi", "d3dcompiler", "dwmapi", "advapi32", "user32", "gdi32", "wininet")
+
+if is_plat("windows") and is_mode("release") then
+    set_runtimes("MD")
+    set_targetdir("build/release/")
+    set_objectdir("build/release/intermediates/")
+    set_dependir("build/release/intermediates/")
+    set_optimize("smallest")
+    add_cxflags("/bigobj")
+else
+    set_runtimes("MDd")
+    set_targetdir("build/debug/")
+    set_objectdir("build/debug/intermediates/")
+    set_dependir("build/debug/intermediates/")
+end
+
+target("necrum_dx12")
+    set_kind("shared")
+    set_pcheader("src/pch.h")
+    
+    add_files("src/menu/**.cpp", "src/widgets/**.cpp")
+    add_files("src/render/dx12_renderer.cpp", "src/render/hooks_dx12.cpp", "src/dllmain.cpp")
+    add_files("src/core/**.cpp")
+    add_headerfiles("src/**.h")
+    add_includedirs("src")
+    add_includedirs("src/ext/imgui", "src/ext/imgui/backends", "src/ext/minhook")
+    add_files("src/ext/imgui/imgui*.cpp")
+    add_files("src/ext/imgui/backends/imgui_impl_win32.cpp", "src/ext/imgui/backends/imgui_impl_dx12.cpp")
+    add_files("src/ext/minhook/*.c", "src/ext/minhook/hde/*.c")
+    
+    add_syslinks("d3d12", "dxgi", "d3dcompiler", "dwmapi", "advapi32", "user32", "gdi32", "wininet")
 
 if is_plat("windows") and is_mode("release") then
     set_runtimes("MD")
