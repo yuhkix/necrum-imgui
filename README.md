@@ -50,7 +50,9 @@ xmake
 - `necrum` - Main binary application
 - `necrum_gl` - OpenGL shared library (DLL)
 - `necrum_dx9` - DirectX9 shared library (DLL)
+- `necrum_dx10` - DirectX10 shared library (DLL)
 - `necrum_dx11` - DirectX11 shared library (DLL)
+- `necrum_dx12` - DirectX12 shared library (DLL)
 - `necrum_vk` - Vulkan shared library (DLL)
 
 ## 📖 Usage
@@ -74,7 +76,9 @@ Menu::Render();
 The framework automatically detects and uses the appropriate renderer based on your application's graphics API:
 
 - **DirectX 9**: For D3D9 applications
+- **DirectX 10**: For D3D10 applications
 - **DirectX 11**: For D3D11 applications
+- **DirectX 12**: For D3D11 applications
 - **OpenGL**: For OpenGL-based applications
 - **Vulkan**: For Vulkan applications
 
