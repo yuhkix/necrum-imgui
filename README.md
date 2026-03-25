@@ -7,7 +7,7 @@
 A modern, feature-rich ImGui-based UI framework designed for Windows applications with support for multiple rendering backends including DirectX 9, DirectX 10, DirectX 11, DirectX 12, OpenGL, and Vulkan.
 
 > [!IMPORTANT]
-> **Work in Progress**: This framework is currently under active development and is intended to be an easy-to-use solution for creating beautiful, custom ImGui menus.
+> **Work in Progress**: This project is currently being rebuilt to be an actual UI framework instead of just a finished menu. The goal is to provide a robust, easy-to-use solution for creating beautiful, custom ImGui interfaces.
 
 
 ![](https://count.getloli.com/@necrum-imgui?name=necrum-imgui&theme=booru-lisu&padding=1&offset=3&align=center&scale=1&pixelated=0&darkmode=auto)
