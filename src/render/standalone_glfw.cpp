@@ -10,6 +10,10 @@
 #include "ext/imgui/backends/imgui_impl_opengl3.h"
 #include "ext/imgui/imgui.h"
 
+// xmake's glfw package defines GLFW_INCLUDE_NONE, which stops glfw3.h from
+// pulling in the system OpenGL header. The texture helpers below call GL 1.1
+// directly, so let GLFW include it (it also handles the Windows prerequisites).
+#undef GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #include <cstdint>
