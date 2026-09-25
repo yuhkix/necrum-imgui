@@ -1,6 +1,6 @@
 #include "dx9_renderer.h"
-#include "../menu/theme.h"
-#include "../core/web_image.h"
+#include "necrum/platform/host.h"
+#include "necrum/extras/web_image.h"
 
 #include "../ext/imgui/imgui.h"
 #include "../ext/imgui/backends/imgui_impl_dx9.h"
@@ -27,7 +27,7 @@ bool DX9Renderer::init(IDirect3DDevice9* device)
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.IniFilename = nullptr;
 
-	theme::LoadFonts(io);
+	nc::host::setup(io);
 
 	if (!ImGui_ImplWin32_Init(cp.hFocusWindow))
 		return false;
@@ -35,10 +35,9 @@ bool DX9Renderer::init(IDirect3DDevice9* device)
 	if (!ImGui_ImplDX9_Init(p_device))
 		return false;
 
-	theme::Apply();
 
-	web_image::set_texture_create_callback(
-			[this](unsigned char* pixels, int width, int height) -> ImTextureID
+	nc::web_image::set_texture_callbacks(
+			[this](const unsigned char* pixels, int width, int height) -> ImTextureID
 			{
 				if (!this->p_device)
 					return 0;
@@ -56,7 +55,7 @@ bool DX9Renderer::init(IDirect3DDevice9* device)
 				}
 
 				unsigned char* dest = static_cast<unsigned char*>(rect.pBits);
-				unsigned char* src = pixels;
+				const unsigned char* src = pixels;
 				for (int y = 0; y < height; ++y)
 				{
 					for (int x = 0; x < width; ++x)
@@ -72,7 +71,8 @@ bool DX9Renderer::init(IDirect3DDevice9* device)
 
 				texture->UnlockRect(0);
 				return (ImTextureID)texture;
-			});
+			},
+		[](ImTextureID tex) { reinterpret_cast<IUnknown*>((uintptr_t)tex)->Release(); });
 
 	initialized = true;
 	return true;
@@ -102,6 +102,8 @@ void DX9Renderer::shutdown()
 	if (!initialized)
 		return;
 
+	nc::host::shutdown();
+	nc::web_image::shutdown();
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();

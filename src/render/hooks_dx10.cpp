@@ -1,6 +1,6 @@
 #include "hooks.h"
 #include "dx10_renderer.h"
-#include "../menu/menu.h"
+#include "necrum/platform/host.h"
 
 #include "../ext/minhook/MinHook.h"
 
@@ -15,8 +15,8 @@ typedef HRESULT(WINAPI* tPresent)(IDXGISwapChain* pSwapChain, UINT SyncInterval,
 tPresent oPresent = nullptr;
 
 WNDPROC oWndProc = nullptr;
+HWND hooked_window = nullptr;
 DX10Renderer renderer;
-menu::Menu menu;
 bool hooks_enabled = true;
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -26,10 +26,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
 
-	if (menu.is_visible())
+	if (nc::host::wants_input())
 	{
-		ImGuiIO& io = ImGui::GetIO();
-
 		if (msg == WM_SETCURSOR && LOWORD(lParam) == HTCLIENT)
 		{
 			return TRUE;
@@ -69,6 +67,7 @@ HRESULT WINAPI h_Present(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Fla
 		{
 			DXGI_SWAP_CHAIN_DESC desc;
 			pSwapChain->GetDesc(&desc);
+			hooked_window = desc.OutputWindow;
 			oWndProc = (WNDPROC)SetWindowLongPtrW(desc.OutputWindow, GWLP_WNDPROC, (LONG_PTR)WndProc);
 		}
 	}
@@ -76,7 +75,7 @@ HRESULT WINAPI h_Present(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Fla
 	if (renderer.is_initialized())
 	{
 		renderer.begin_frame();
-		menu.render();
+		nc::host::frame();
 		renderer.end_frame();
 	}
 
@@ -110,7 +109,7 @@ bool Hooks::init()
 	p_swap_chain->Release();
 	p_device->Release();
 
-	if (MH_CreateHook(p_present, &h_Present, (LPVOID*)&oPresent) != MH_OK)
+	if (MH_CreateHook(p_present, reinterpret_cast<LPVOID>(&h_Present), (LPVOID*)&oPresent) != MH_OK)
 		return false;
 
 	if (MH_EnableHook(p_present) != MH_OK)
@@ -122,6 +121,10 @@ bool Hooks::init()
 void Hooks::shutdown()
 {
 	hooks_enabled = false;
+	// Restore the original window procedure before this module is unloaded.
+	if (hooked_window && oWndProc)
+		SetWindowLongPtrW(hooked_window, GWLP_WNDPROC, (LONG_PTR)oWndProc);
+
 	MH_DisableHook(MH_ALL_HOOKS);
 	MH_Uninitialize();
 	renderer.shutdown();

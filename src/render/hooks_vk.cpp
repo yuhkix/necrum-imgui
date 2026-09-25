@@ -1,6 +1,6 @@
 #include "hooks.h"
 #include "vulkan_renderer.h"
-#include "../menu/menu.h"
+#include "necrum/platform/host.h"
 
 #include "../ext/minhook/MinHook.h"
 #include <vulkan/vulkan.h>
@@ -14,7 +14,6 @@ typedef VkResult(VKAPI_PTR* tQueuePresentKHR)(VkQueue queue, const VkPresentInfo
 tQueuePresentKHR oQueuePresentKHR = nullptr;
 
 VulkanRenderer renderer;
-menu::Menu menu;
 bool hooks_enabled = true;
 
 // Placeholder for objects that would be captured via other hooks (e.g. vkCreateDevice)
@@ -41,7 +40,7 @@ VkResult VKAPI_PTR h_QueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* p_pr
 	if (renderer.is_initialized())
 	{
 		renderer.begin_frame();
-		menu.render();
+		nc::host::frame();
 		// In Vulkan we need a command buffer to render; this is usually managed
 		// by hooking vkAcquireNextImageKHR or having our own command pool.
 		// renderer.end_frame(command_buffer);
@@ -65,7 +64,7 @@ bool Hooks::init()
 	if (!p_present)
 		return false;
 
-	if (MH_CreateHook(p_present, &h_QueuePresentKHR, (LPVOID*)&oQueuePresentKHR) != MH_OK)
+	if (MH_CreateHook(p_present, reinterpret_cast<LPVOID>(&h_QueuePresentKHR), (LPVOID*)&oQueuePresentKHR) != MH_OK)
 		return false;
 
 	if (MH_EnableHook(p_present) != MH_OK)

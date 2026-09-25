@@ -55,3 +55,6 @@ build/
 *.tmp
 *.temp
 *~
+
+# Saved configs from the example apps
+configs/

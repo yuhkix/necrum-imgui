@@ -1,6 +1,6 @@
 #include "dx12_renderer.h"
-#include "../menu/theme.h"
-#include "../core/web_image.h"
+#include "necrum/platform/host.h"
+#include "necrum/extras/web_image.h"
 
 #include "../ext/imgui/imgui.h"
 #include "../ext/imgui/backends/imgui_impl_dx12.h"
@@ -81,7 +81,7 @@ bool DX12Renderer::init(IDXGISwapChain3* swap_chain, ID3D12CommandQueue* command
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.IniFilename = nullptr;
 
-	theme::LoadFonts(io);
+	nc::host::setup(io);
 
 	if (!ImGui_ImplWin32_Init(h_hwnd))
 		return false;
@@ -91,10 +91,9 @@ bool DX12Renderer::init(IDXGISwapChain3* swap_chain, ID3D12CommandQueue* command
 													 p_pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart()))
 		return false;
 
-	theme::Apply();
 
-	web_image::set_texture_create_callback(
-			[this](unsigned char* pixels, int width, int height) -> ImTextureID
+	nc::web_image::set_texture_callbacks(
+			[this](const unsigned char* pixels, int width, int height) -> ImTextureID
 			{
 				if (!this->p_device || m_srv_heap_next_slot >= 128)
 					return 0;
@@ -347,6 +346,8 @@ void DX12Renderer::shutdown()
 
 	wait_for_last_submitted_frame();
 
+	nc::host::shutdown();
+	nc::web_image::shutdown();
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();

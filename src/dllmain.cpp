@@ -1,45 +1,42 @@
-#include "pch.h"
-#include "render/hooks.h"
-#include "core/console.h"
+// Entry point of the injectable Windows DLL targets (necrum_dx9 ... necrum_vk).
+// The hook installs itself into the host process' Present/SwapBuffers and
+// drives the registered nc::App every frame. Press END to unload.
 
-DWORD WINAPI MainThread(LPVOID lpParam)
+#include "pch.h"
+
+#include "necrum/platform/console.h"
+#include "render/hooks.h"
+
+namespace
 {
-	core::Console::Init();
+DWORD WINAPI main_thread(LPVOID module)
+{
+	nc::console::open();
 
 	if (!renderer::Hooks::init())
 	{
-		core::Console::Shutdown();
+		nc::console::close();
+		FreeLibraryAndExitThread((HMODULE)module, 1);
 		return 1;
 	}
 
-	while (true)
-	{
-		if (GetAsyncKeyState(VK_END) & 0x8000)
-		{
-			break;
-		}
+	while (!(GetAsyncKeyState(VK_END) & 0x8000))
 		Sleep(100);
-	}
 
 	renderer::Hooks::shutdown();
-	core::Console::Shutdown();
-	FreeLibraryAndExitThread((HMODULE)lpParam, 0);
+	nc::console::close();
+	FreeLibraryAndExitThread((HMODULE)module, 0);
 	return 0;
 }
+} // namespace
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
+BOOL APIENTRY DllMain(HMODULE module, DWORD reason, LPVOID)
 {
-	switch (ul_reason_for_call)
+	if (reason == DLL_PROCESS_ATTACH)
 	{
-	case DLL_PROCESS_ATTACH:
-		DisableThreadLibraryCalls(hModule);
-		if (auto hThread = CreateThread(nullptr, 0, MainThread, hModule, 0, nullptr))
-		{
-			CloseHandle(hThread);
-		}
-		break;
-	case DLL_PROCESS_DETACH:
-		break;
+		DisableThreadLibraryCalls(module);
+		if (HANDLE thread = CreateThread(nullptr, 0, main_thread, module, 0, nullptr))
+			CloseHandle(thread);
 	}
 	return TRUE;
 }

@@ -1,0 +1,46 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [showcase, game_menu]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install system packages
+        run: sudo apt-get update && sudo apt-get install -y libglfw3-dev libgl-dev
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: latest
+      - name: Configure
+        run: xmake f -y -m release --app=${{ matrix.app }}
+      - name: Build
+        run: xmake -y -a
+      - name: Headless fuzz test
+        run: |
+          xmake run necrum_headless 3000 1
+          xmake run necrum_headless 3000 2
+
+  windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [showcase, game_menu]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: latest
+      - name: Configure
+        run: xmake f -y -m release --app=${{ matrix.app }}
+      - name: Build
+        run: xmake -y -a
+      - name: Headless fuzz test
+        run: xmake run necrum_headless 3000 1

@@ -1,6 +1,6 @@
 #include "vulkan_renderer.h"
-#include "../menu/theme.h"
-#include "../core/web_image.h"
+#include "necrum/platform/host.h"
+#include "necrum/extras/web_image.h"
 
 #include "../ext/imgui/imgui.h"
 #include "../ext/imgui/backends/imgui_impl_vulkan.h"
@@ -49,7 +49,7 @@ bool VulkanRenderer::init(VkInstance instance, VkPhysicalDevice physical_device,
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.IniFilename = nullptr;
 
-	theme::LoadFonts(io);
+	nc::host::setup(io);
 
 	// Note: In a real hook, HWND should be obtained from the window associated with Vulkan
 	ImGui_ImplWin32_Init(GetForegroundWindow());
@@ -74,10 +74,9 @@ bool VulkanRenderer::init(VkInstance instance, VkPhysicalDevice physical_device,
 	if (!ImGui_ImplVulkan_Init(&init_info))
 		return false;
 
-	theme::Apply();
 
-	web_image::set_texture_create_callback(
-			[this](unsigned char* pixels, int width, int height) -> ImTextureID
+	nc::web_image::set_texture_callbacks(
+			[this](const unsigned char* pixels, int width, int height) -> ImTextureID
 			{
 				if (!this->p_device)
 					return 0;
@@ -269,6 +268,8 @@ void VulkanRenderer::shutdown()
 	if (!initialized)
 		return;
 
+	nc::host::shutdown();
+	nc::web_image::shutdown();
 	ImGui_ImplVulkan_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();

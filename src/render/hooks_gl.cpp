@@ -1,6 +1,6 @@
 #include "hooks.h"
 #include "opengl_renderer.h"
-#include "../menu/menu.h"
+#include "necrum/platform/host.h"
 
 #include "../ext/minhook/MinHook.h"
 
@@ -15,8 +15,8 @@ typedef BOOL(WINAPI* twglSwapBuffers)(HDC hdc);
 twglSwapBuffers owglSwapBuffers = nullptr;
 
 WNDPROC oWndProc = nullptr;
+HWND hooked_window = nullptr;
 OpenGLRenderer renderer;
-menu::Menu menu;
 bool hooks_enabled = true;
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -26,10 +26,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
 
-	if (menu.is_visible())
+	if (nc::host::wants_input())
 	{
-		ImGuiIO& io = ImGui::GetIO();
-
 		if (msg == WM_SETCURSOR && LOWORD(lParam) == HTCLIENT)
 		{
 			return TRUE;
@@ -71,6 +69,7 @@ BOOL WINAPI h_wglSwapBuffers(HDC hdc)
 		{
 			if (renderer.init(hwnd))
 			{
+				hooked_window = hwnd;
 				oWndProc = (WNDPROC)SetWindowLongPtrW(hwnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
 				initialized = true;
 			}
@@ -80,7 +79,7 @@ BOOL WINAPI h_wglSwapBuffers(HDC hdc)
 	if (initialized)
 	{
 		renderer.begin_frame();
-		menu.render();
+		nc::host::frame();
 		renderer.end_frame();
 	}
 
@@ -101,7 +100,7 @@ bool Hooks::init()
 	if (!p_wglSwapBuffers)
 		return false;
 
-	if (MH_CreateHook(p_wglSwapBuffers, &h_wglSwapBuffers, (LPVOID*)&owglSwapBuffers) != MH_OK)
+	if (MH_CreateHook(p_wglSwapBuffers, reinterpret_cast<LPVOID>(&h_wglSwapBuffers), (LPVOID*)&owglSwapBuffers) != MH_OK)
 		return false;
 
 	if (MH_EnableHook(p_wglSwapBuffers) != MH_OK)
@@ -114,8 +113,10 @@ void Hooks::shutdown()
 {
 	hooks_enabled = false;
 
-	// In a real DLL, we might want to restore WndProc and cleanup renderer
-	// but for this implementation we'll keep it simple as a shutdown flag.
+	// Restore the original window procedure before this module is unloaded.
+	if (hooked_window && oWndProc)
+		SetWindowLongPtrW(hooked_window, GWLP_WNDPROC, (LONG_PTR)oWndProc);
+
 	MH_DisableHook(MH_ALL_HOOKS);
 	MH_Uninitialize();
 
