@@ -1,6 +1,6 @@
 #include "hooks.h"
 #include "dx12_renderer.h"
-#include "../menu/menu.h"
+#include "necrum/platform/host.h"
 
 #include "../ext/minhook/MinHook.h"
 
@@ -18,8 +18,8 @@ typedef void(WINAPI* tExecuteCommandLists)(ID3D12CommandQueue* pCommandQueue, UI
 tExecuteCommandLists oExecuteCommandLists = nullptr;
 
 WNDPROC oWndProc = nullptr;
+HWND hooked_window = nullptr;
 DX12Renderer renderer;
-menu::Menu menu;
 bool hooks_enabled = true;
 ID3D12CommandQueue* p_captured_command_queue = nullptr;
 
@@ -30,10 +30,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
 
-	if (menu.is_visible())
+	if (nc::host::wants_input())
 	{
-		ImGuiIO& io = ImGui::GetIO();
-
 		if (msg == WM_SETCURSOR && LOWORD(lParam) == HTCLIENT)
 		{
 			return TRUE;
@@ -86,6 +84,7 @@ HRESULT WINAPI h_Present(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Fla
 			{
 				DXGI_SWAP_CHAIN_DESC desc;
 				pSwapChain->GetDesc(&desc);
+				hooked_window = desc.OutputWindow;
 				oWndProc = (WNDPROC)SetWindowLongPtrW(desc.OutputWindow, GWLP_WNDPROC, (LONG_PTR)WndProc);
 			}
 			pSwapChain3->Release();
@@ -98,7 +97,7 @@ HRESULT WINAPI h_Present(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Fla
 		if (SUCCEEDED(pSwapChain->QueryInterface(IID_PPV_ARGS(&pSwapChain3))))
 		{
 			renderer.begin_frame();
-			menu.render();
+			nc::host::frame();
 			renderer.end_frame(pSwapChain3);
 			pSwapChain3->Release();
 		}
@@ -169,10 +168,10 @@ bool Hooks::init()
 	p_device->Release();
 	p_factory->Release();
 
-	if (MH_CreateHook(p_present, &h_Present, (LPVOID*)&oPresent) != MH_OK)
+	if (MH_CreateHook(p_present, reinterpret_cast<LPVOID>(&h_Present), (LPVOID*)&oPresent) != MH_OK)
 		return false;
 
-	if (MH_CreateHook(p_execute, &h_ExecuteCommandLists, (LPVOID*)&oExecuteCommandLists) != MH_OK)
+	if (MH_CreateHook(p_execute, reinterpret_cast<LPVOID>(&h_ExecuteCommandLists), (LPVOID*)&oExecuteCommandLists) != MH_OK)
 		return false;
 
 	if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
@@ -184,6 +183,10 @@ bool Hooks::init()
 void Hooks::shutdown()
 {
 	hooks_enabled = false;
+	// Restore the original window procedure before this module is unloaded.
+	if (hooked_window && oWndProc)
+		SetWindowLongPtrW(hooked_window, GWLP_WNDPROC, (LONG_PTR)oWndProc);
+
 	MH_DisableHook(MH_ALL_HOOKS);
 	MH_Uninitialize();
 	renderer.shutdown();

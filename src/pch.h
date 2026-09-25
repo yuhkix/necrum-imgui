@@ -1,8 +1,14 @@
 #pragma once
 
+// Precompiled header for the Windows render backends and hooks (not used by src/necrum).
+
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
 #define NOMINMAX
-#include <Windows.h>
+#endif
+#include <windows.h>
 
 #include <d3d11.h>
 #include <dxgi.h>

@@ -1,7 +1,7 @@
 #include "dx11_renderer.h"
-#include "../menu/theme.h"
+#include "necrum/platform/host.h"
 #include "../pch.h"
-#include "core/web_image.h"
+#include "necrum/extras/web_image.h"
 
 #include "../ext/imgui/imgui.h"
 #include "../ext/imgui/backends/imgui_impl_dx11.h"
@@ -32,7 +32,7 @@ bool DX11Renderer::init(IDXGISwapChain* swap_chain)
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.IniFilename = nullptr;
 
-	theme::LoadFonts(io);
+	nc::host::setup(io);
 
 	if (!ImGui_ImplWin32_Init(h_hwnd))
 		return false;
@@ -41,9 +41,8 @@ bool DX11Renderer::init(IDXGISwapChain* swap_chain)
 		return false;
 
 	create_render_target(swap_chain);
-	theme::Apply();
 
-	web_image::set_texture_create_callback([this](unsigned char* pixels, int width, int height) -> ImTextureID {
+	nc::web_image::set_texture_callbacks([this](const unsigned char* pixels, int width, int height) -> ImTextureID {
 		if (!this->p_device) return 0;
 		D3D11_TEXTURE2D_DESC desc{};
 		desc.Width = width;
@@ -72,7 +71,8 @@ bool DX11Renderer::init(IDXGISwapChain* swap_chain)
 
 		texture->Release();
 		return (ImTextureID)srv;
-	});
+	},
+		[](ImTextureID tex) { reinterpret_cast<IUnknown*>((uintptr_t)tex)->Release(); });
 
 	initialized = true;
 	return true;
@@ -123,6 +123,8 @@ void DX11Renderer::shutdown()
 	if (!initialized)
 		return;
 
+	nc::host::shutdown();
+	nc::web_image::shutdown();
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();

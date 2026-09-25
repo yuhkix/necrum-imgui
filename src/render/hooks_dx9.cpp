@@ -1,6 +1,6 @@
 #include "hooks.h"
 #include "dx9_renderer.h"
-#include "../menu/menu.h"
+#include "necrum/platform/host.h"
 
 #include <d3d9.h>
 #include "../ext/minhook/MinHook.h"
@@ -20,8 +20,8 @@ tEndScene oEndScene = nullptr;
 tReset oReset = nullptr;
 
 WNDPROC oWndProc = nullptr;
+HWND hooked_window = nullptr;
 DX9Renderer renderer;
-menu::Menu menu;
 bool hooks_enabled = true;
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -31,10 +31,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
 
-	if (menu.is_visible())
+	if (nc::host::wants_input())
 	{
-		ImGuiIO& io = ImGui::GetIO();
-
 		if (msg == WM_SETCURSOR && LOWORD(lParam) == HTCLIENT)
 		{
 			return TRUE;
@@ -94,6 +92,7 @@ HRESULT WINAPI h_EndScene(IDirect3DDevice9* pDevice)
 		{
 			D3DDEVICE_CREATION_PARAMETERS cp;
 			pDevice->GetCreationParameters(&cp);
+			hooked_window = cp.hFocusWindow;
 			oWndProc = (WNDPROC)SetWindowLongPtrW(cp.hFocusWindow, GWLP_WNDPROC, (LONG_PTR)WndProc);
 		}
 	}
@@ -101,7 +100,7 @@ HRESULT WINAPI h_EndScene(IDirect3DDevice9* pDevice)
 	if (renderer.is_initialized())
 	{
 		renderer.begin_frame();
-		menu.render();
+		nc::host::frame();
 		renderer.end_frame();
 	}
 
@@ -141,10 +140,10 @@ bool Hooks::init()
 	pDevice->Release();
 	pD3D->Release();
 
-	if (MH_CreateHook(p_endscene, &h_EndScene, (LPVOID*)&oEndScene) != MH_OK)
+	if (MH_CreateHook(p_endscene, reinterpret_cast<LPVOID>(&h_EndScene), (LPVOID*)&oEndScene) != MH_OK)
 		return false;
 
-	if (MH_CreateHook(p_reset, &h_Reset, (LPVOID*)&oReset) != MH_OK)
+	if (MH_CreateHook(p_reset, reinterpret_cast<LPVOID>(&h_Reset), (LPVOID*)&oReset) != MH_OK)
 		return false;
 
 	if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
@@ -157,12 +156,9 @@ void Hooks::shutdown()
 {
 	hooks_enabled = false;
 
-	if (oWndProc)
-	{
-		D3DDEVICE_CREATION_PARAMETERS cp;
-		// Wait, how to restore wndproc if we don't have focus window anymore?
-		// Actually, DX11 didn't restore wndproc on shutdown either...
-	}
+	// Restore the original window procedure before this module is unloaded.
+	if (hooked_window && oWndProc)
+		SetWindowLongPtrW(hooked_window, GWLP_WNDPROC, (LONG_PTR)oWndProc);
 
 	MH_DisableHook(MH_ALL_HOOKS);
 	MH_Uninitialize();
